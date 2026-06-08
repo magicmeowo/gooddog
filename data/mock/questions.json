@@ -1,0 +1,106 @@
+{
+  "_comment": "9 道题。type=hard 触发门槛过滤，type=soft 给负担维度打分，type=pref 喜好排序。scores 里的键对应 rubric 的维度。filters 里是硬约束。文案以好玩、像聊性格为准，背后偷偷测维度。",
+  "questions": [
+    {
+      "id": "q_morning",
+      "type": "soft",
+      "text": "想象一个完美的周末早晨，你更想——",
+      "subtitle": "没有标准答案，凭直觉选",
+      "options": [
+        { "label": "😴 窝在床上睡到自然醒，谁也别叫我", "scores": { "exercise": 1 } },
+        { "label": "☕️ 慢悠悠起床，楼下遛个弯买杯咖啡", "scores": { "exercise": 3 } },
+        { "label": "🌅 六点起来跑步 / 爬山，精神得很", "scores": { "exercise": 5 } }
+      ]
+    },
+    {
+      "id": "q_home",
+      "type": "hard",
+      "text": "你现在住的地方是——",
+      "subtitle": "决定能不能养大狗的硬条件",
+      "options": [
+        { "label": "🏢 城市里的小公寓 / 出租屋", "filters": { "max_size": "small" } },
+        { "label": "🏠 普通三居室，空间还行", "filters": { "max_size": "medium" } },
+        { "label": "🌳 大房子，甚至有院子 / 一楼带花园", "filters": { "max_size": "large" } }
+      ]
+    },
+    {
+      "id": "q_neighbor",
+      "type": "hard",
+      "text": "如果半夜有点动静，你的居住环境——",
+      "subtitle": "悄悄在问：你怕不怕狗叫扰邻",
+      "options": [
+        { "label": "🤫 合租 / 墙薄 / 邻居敏感，必须安静", "filters": { "max_noise": 2 } },
+        { "label": "🙂 还好，偶尔叫两声没人管", "filters": { "max_noise": 3 } },
+        { "label": "🎉 独栋 / 隔音好，叫破天也无所谓", "filters": { "max_noise": 5 } }
+      ]
+    },
+    {
+      "id": "q_household",
+      "type": "hard",
+      "text": "家里除了你，还有谁会跟狗朝夕相处？",
+      "subtitle": "可能藏着过敏和安全的坑",
+      "options": [
+        { "label": "🧍 就我一个，自由", "filters": {} },
+        { "label": "👶 有小孩 / 老人", "filters": { "require_good_with_kids": true } },
+        { "label": "🤧 有人对毛过敏 / 有洁癖", "filters": { "require_hypoallergenic": true } },
+        { "label": "🐈 已经有别的猫猫狗狗了", "filters": {} }
+      ]
+    },
+    {
+      "id": "q_away",
+      "type": "soft",
+      "text": "工作日里，狗大概要独自在家——",
+      "subtitle": "测它能不能忍受独处",
+      "options": [
+        { "label": "🌙 我经常加班 / 出差，它得自己待大半天", "scores": { "alone_tolerance": 5 } },
+        { "label": "🏃 朝九晚六，白天没人但晚上都在", "scores": { "alone_tolerance": 3 } },
+        { "label": "🏡 我居家办公 / 时间自由，基本全天有人", "scores": { "alone_tolerance": 1 } }
+      ]
+    },
+    {
+      "id": "q_mess",
+      "type": "soft",
+      "text": "沙发上落了一层狗毛、地上一个泥脚印，你的反应是——",
+      "subtitle": "测你对掉毛和打理的忍受度",
+      "options": [
+        { "label": "😩 受不了，我希望家里一直干干净净", "scores": { "grooming": 1 } },
+        { "label": "😅 打扫一下就好，能接受适度乱", "scores": { "grooming": 3 } },
+        { "label": "😎 无所谓，狗毛是爱的形状", "scores": { "grooming": 5 } }
+      ]
+    },
+    {
+      "id": "q_experience",
+      "type": "soft",
+      "text": "面对一只调皮、不太听话、还有点犟的狗，你——",
+      "subtitle": "测你的经验和耐心，决定能不能驾驭",
+      "options": [
+        { "label": "🆘 完全没养过，希望它天生乖、好带", "scores": { "train_difficulty": 1 } },
+        { "label": "🙂 没太多经验，但愿意学、愿意花时间", "scores": { "train_difficulty": 3 } },
+        { "label": "💪 我养过狗 / 很有耐心，再犟也能搞定", "scores": { "train_difficulty": 5 } }
+      ]
+    },
+    {
+      "id": "q_budget",
+      "type": "soft",
+      "text": "每个月愿意为狗花的钱，大概是——",
+      "subtitle": "狗粮、医疗、美容都在里面",
+      "options": [
+        { "label": "💰 精打细算，越省心省钱越好", "scores": { "budget": 1 } },
+        { "label": "💳 中等，合理范围内不心疼", "scores": { "budget": 3 } },
+        { "label": "🤑 不差钱，只要它过得好", "scores": { "budget": 5 } }
+      ]
+    },
+    {
+      "id": "q_vibe",
+      "type": "pref",
+      "text": "最后一题凭感觉——你理想中的狗狗是？",
+      "subtitle": "这题只影响给你排序，不影响合不合适",
+      "options": [
+        { "label": "🧸 小小一只、软萌可爱，能抱在怀里", "pref": { "size": "small", "personality": "黏人" } },
+        { "label": "🐺 帅气有型、有点酷，遛出去有面子", "pref": { "size": "large", "personality": "独立" } },
+        { "label": "🥰 温柔粘人的大暖男 / 暖女", "pref": { "size": "large", "personality": "温顺" } },
+        { "label": "🤹 古灵精怪、活泼爱玩的开心果", "pref": { "personality": "活泼" } }
+      ]
+    }
+  ]
+}
