@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoodDog · 匹配逻辑测试原型</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .fade { animation: f .35s ease; }
+  @keyframes f { from { opacity:0; transform:translateY(8px);} to {opacity:1; transform:none;} }
+</style>
+</head>
+<body class="bg-stone-50 text-stone-800 min-h-screen">
+<!--
+  这是「匹配逻辑测试原型」，不是最终设计稿。
+  目的：让你真的答题、看到推荐结果，判断匹配准不准。
+  视觉故意做朴素——真正的视觉设计在后面的 mockup 阶段做。
+  数据内嵌（来自 data/mock/questions.json 和 dogs.json 的副本）。
+-->
+<div id="app" class="max-w-md mx-auto px-5 py-8"></div>
+
+<script>
+// ============ 数据（来自 data/mock 的副本，仅用于原型测试）============
+const QUESTIONS = [
+  { id:"q_morning", type:"soft", text:"想象一个完美的周末早晨，你更想——", subtitle:"凭直觉选，没有标准答案",
+    options:[
+      {label:"😴 窝在床上睡到自然醒，谁也别叫我", scores:{exercise:1}},
+      {label:"☕️ 慢悠悠起床，楼下遛个弯买杯咖啡", scores:{exercise:3}},
+      {label:"🌅 六点起来跑步 / 爬山，精神得很", scores:{exercise:5}} ]},
+  { id:"q_home", type:"hard", text:"你现在住的地方是——", subtitle:"决定能不能养大狗的硬条件",
+    options:[
+      {label:"🏢 城市里的小公寓 / 出租屋", filters:{max_size:"small"}},
+      {label:"🏠 普通三居室，空间还行", filters:{max_size:"medium"}},
+      {label:"🌳 大房子，甚至有院子 / 一楼带花园", filters:{max_size:"large"}} ]},
+  { id:"q_neighbor", type:"hard", text:"如果半夜有点动静，你的居住环境——", subtitle:"悄悄在问：怕不怕狗叫扰邻",
+    options:[
+      {label:"🤫 合租 / 墙薄 / 邻居敏感，必须安静", filters:{max_noise:2}},
+      {label:"🙂 还好，偶尔叫两声没人管", filters:{max_noise:3}},
+      {label:"🎉 独栋 / 隔音好，叫破天也无所谓", filters:{max_noise:5}} ]},
+  { id:"q_household", type:"hard", text:"家里除了你，还有谁会跟狗朝夕相处？", subtitle:"可能藏着过敏和安全的坑",
+    options:[
+      {label:"🧍 就我一个，自由", filters:{}},
+      {label:"👶 有小孩 / 老人", filters:{require_good_with_kids:true}},
+      {label:"🤧 有人对毛过敏 / 有洁癖", filters:{require_hypoallergenic:true}},
+      {label:"🐈 已经有别的猫猫狗狗了", filters:{}} ]},
+  { id:"q_away", type:"soft", text:"工作日里，狗大概要独自在家——", subtitle:"测它能不能忍受独处",
+    options:[
+      {label:"🌙 我经常加班 / 出差，它得自己待大半天", scores:{alone_req:5}},
+      {label:"🏃 朝九晚六，白天没人但晚上都在", scores:{alone_req:3}},
+      {label:"🏡 我居家办公 / 时间自由，基本全天有人", scores:{alone_req:1}} ]},
+  { id:"q_mess", type:"soft", text:"沙发上落了一层狗毛、地上一个泥脚印，你的反应是——", subtitle:"测对掉毛和打理的忍受度",
+    options:[
+      {label:"😩 受不了，我希望家里一直干干净净", scores:{grooming:1}},
+      {label:"😅 打扫一下就好，能接受适度乱", scores:{grooming:3}},
+      {label:"😎 无所谓，狗毛是爱的形状", scores:{grooming:5}} ]},
+  { id:"q_experience", type:"soft", text:"面对一只调皮、不太听话、还有点犟的狗，你——", subtitle:"测经验和耐心，决定能不能驾驭",
+    options:[
+      {label:"🆘 完全没养过，希望它天生乖、好带", scores:{train:1}},
+      {label:"🙂 没太多经验，但愿意学、愿意花时间", scores:{train:3}},
+      {label:"💪 我养过狗 / 很有耐心，再犟也能搞定", scores:{train:5}} ]},
+  { id:"q_budget", type:"soft", text:"每个月愿意为狗花的钱，大概是——", subtitle:"狗粮、医疗、美容都在里面",
+    options:[
+      {label:"💰 精打细算，越省心省钱越好", scores:{budget:1}},
+      {label:"💳 中等，合理范围内不心疼", scores:{budget:3}},
+      {label:"🤑 不差钱，只要它过得好", scores:{budget:5}} ]},
+  { id:"q_vibe", type:"pref", text:"最后一题凭感觉——你理想中的狗狗是？", subtitle:"这题只影响排序，不影响合不合适",
+    options:[
+      {label:"🧸 小小一只、软萌可爱，能抱在怀里", pref:{size:"small", personality:"黏人"}},
+      {label:"🐺 帅气有型、有点酷，遛出去有面子", pref:{size:"large", personality:"独立"}},
+      {label:"🥰 温柔粘人的大暖男 / 暖女", pref:{size:"large", personality:"温顺"}},
+      {label:"🤹 古灵精怪、活泼爱玩的开心果", pref:{personality:"活泼"}} ]},
+];
+
+const DOGS = [
+  {id:"poodle",name:"泰迪/贵宾",size:"small",traits:{exercise:4,grooming:4,alone_tolerance:2,train_difficulty:1,budget:3},filters:{noise:3,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["聪明","黏人","爱玩"],one_liner:"狗界优等生，你说啥它懂啥，学新动作快得让你怀疑它偷看了说明书。",real_talk:"卷毛不掉但会一直长，不修剪就成流浪汉，美容店是你每月固定开销。"},
+  {id:"bichon",name:"比熊",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:2,train_difficulty:2,budget:3},filters:{noise:3,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["亲人","开朗","爱粘人"],one_liner:"行走的棉花糖，一天到晚乐呵呵，见谁都觉得你是来爱它的。",real_talk:"白毛娃容易泪痕和打结，不天天打理就脏脏丑丑，剃毛修剪也省不了。"},
+  {id:"pomeranian",name:"博美",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:3,train_difficulty:3,budget:3},filters:{noise:4,hypoallergenic:false,good_with_kids:false,novice_friendly:true},personality:["机灵","爱叫","有主见"],one_liner:"两斤重的小狮子，胆子比身体大十倍，门口有响动它第一个冲上去汪汪汪。",real_talk:"双层毛掉得欢、换毛季满屋飞絮，而且是个话痨，楼薄邻居敏感的慎入。"},
+  {id:"french_bulldog",name:"法斗",size:"small",traits:{exercise:2,grooming:3,alone_tolerance:2,train_difficulty:3,budget:5},filters:{noise:1,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["憨厚","黏人","安静"],one_liner:"沙发挂件本件，不爱叫不爱动，最大爱好是趴你腿上发出小猪呼噜。",real_talk:"短鼻子是病包，呼吸道、皮肤、关节都容易出问题，怕热不能剧烈运动，医药费是真烧钱。"},
+  {id:"pug",name:"巴哥",size:"small",traits:{exercise:2,grooming:4,alone_tolerance:3,train_difficulty:3,budget:4},filters:{noise:2,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["逗趣","随和","贪吃"],one_liner:"自带喜剧效果的小胖子，散步二十分钟就够，剩下时间负责卖萌和打呼噜。",real_talk:"短毛但掉成灾、被叫'掉毛怪'，脸褶要天天擦，短鼻同样怕热易生病、还特能吃容易胖。"},
+  {id:"chihuahua",name:"吉娃娃",size:"small",traits:{exercise:2,grooming:2,alone_tolerance:3,train_difficulty:3,budget:2},filters:{noise:4,hypoallergenic:false,good_with_kids:false,novice_friendly:true},personality:["警惕","护主","小炮仗"],one_liner:"体重一斤气场一吨，认准一个主人死忠护卫，谁靠太近它先警告三声。",real_talk:"爱叫又容易护食凶人，对陌生人和小孩不太友好，养它得接受它的小脾气。"},
+  {id:"maltese",name:"马尔济斯",size:"small",traits:{exercise:2,grooming:4,alone_tolerance:2,train_difficulty:2,budget:3},filters:{noise:3,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["温柔","黏人","优雅"],one_liner:"披着白丝绸的小贵族，温柔又黏人，最喜欢窝你怀里当个安静的小美人。",real_talk:"一身白长毛是面子工程，不天天梳就打结、眼周泪痕擦不及，太黏人独处久了会焦虑。"},
+  {id:"corgi",name:"柯基",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:3,train_difficulty:3,budget:3},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["活泼","聪明","固执"],one_liner:"腿短一截的牧羊犬，自以为是大狗，能跟你跑能跟你犟，屁股扭起来全场最佳。",real_talk:"双层毛一年掉两季、平时也天天掉，沙发地板全是毛；脾气倔，叫起来嗓门不小。"},
+  {id:"miniature_schnauzer",name:"雪纳瑞",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:3,train_difficulty:2,budget:3},filters:{noise:4,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["机灵","爱叫","黏人"],one_liner:"顶着老头眉毛和大胡子的小硬汉，聪明伶俐还不怎么掉毛，是出了名的省心搭子。",real_talk:"毛不掉但要花钱：每5-8周得修剪一次；而且是个话痨，门口有动静必报告。"},
+  {id:"dachshund",name:"腊肠",size:"small",traits:{exercise:2,grooming:2,alone_tolerance:3,train_difficulty:4,budget:3},filters:{noise:5,hypoallergenic:false,good_with_kids:false,novice_friendly:false},personality:["勇猛","固执","护主"],one_liner:"一根会走路的小香肠，胆子比身子大十倍，认定的事九头牛都拉不回来。",real_talk:"嗓门巨大、特别爱叫，又倔又有主见不好训；身子长容易椎间盘出问题，得防着别让它乱跳。"},
+  {id:"yorkshire_terrier",name:"约克夏",size:"small",traits:{exercise:2,grooming:4,alone_tolerance:2,train_difficulty:3,budget:3},filters:{noise:4,hypoallergenic:true,good_with_kids:false,novice_friendly:true},personality:["黏人","倔强","爱叫"],one_liner:"巴掌大的迷你贵妇，一身丝绸长发能拖地，骨子里却是个天不怕地不怕的小梗犬。",real_talk:"毛少不咋掉，但留长发要天天打理、还得花钱修剪；很黏人、需求没满足就开嗓。"},
+  {id:"papillon",name:"蝴蝶犬",size:"small",traits:{exercise:3,grooming:3,alone_tolerance:3,train_difficulty:2,budget:2},filters:{noise:3,hypoallergenic:true,good_with_kids:false,novice_friendly:true},personality:["聪明","敏捷","亲人"],one_liner:"顶着两片蝴蝶大耳朵的小机灵鬼，是玩具犬里出了名的学霸，敏捷赛场上常拿冠军。",real_talk:"脑子太好用，闲着会自己找乐子；长饰毛每周得梳几次；体型娇小，磕碰得当心。"},
+  {id:"beagle",name:"比格",size:"small",traits:{exercise:4,grooming:3,alone_tolerance:2,train_difficulty:4,budget:3},filters:{noise:5,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["欢乐","贪吃","鼻子至上"],one_liner:"永远开心、永远在闻地的快乐小猎犬，鼻子一带电整条狗就失联，跟谁都自来熟。",real_talk:"会嚎会吠嗓门感人、容易扰邻；鼻子一带头就不听召唤，固执难训；超能吃要防胖。"},
+  {id:"cocker_spaniel",name:"可卡",size:"medium",traits:{exercise:3,grooming:5,alone_tolerance:2,train_difficulty:2,budget:4},filters:{noise:2,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["温柔","亲人","讨喜"],one_liner:"一双水汪汪大眼配上波浪长耳，性子温软又黏人，是公认的家庭暖心担当。",real_talk:"一身长毛是个无底洞：要常梳、定期修剪很费钱；大耳朵不透气特别容易耳道发炎。"},
+  {id:"golden_retriever",name:"金毛",size:"large",traits:{exercise:4,grooming:5,alone_tolerance:2,train_difficulty:1,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["温顺","聪明","亲人"],one_liner:"走在路上谁都想摸两把的人见人爱大暖男，把'快乐'写在脸上。",real_talk:"掉毛是真的猛，换毛季家里能再'养'出一条狗；而且精力旺，不遛它它能把你的拖鞋一只只叼走。"},
+  {id:"labrador_retriever",name:"拉布拉多",size:"large",traits:{exercise:5,grooming:4,alone_tolerance:2,train_difficulty:1,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["热情","好训","贪吃"],one_liner:"全世界最好训的狗之一，导盲犬天花板，唯一的人生目标是吃和讨好你。",real_talk:"精力是真旺，幼年期能拆家拆到你怀疑人生；而且嘴特别馋，不控食量分分钟胖成猪。"},
+  {id:"siberian_husky",name:"哈士奇",size:"medium",traits:{exercise:5,grooming:4,alone_tolerance:1,train_difficulty:5,budget:3},filters:{noise:4,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["固执","话痨","精力爆表"],one_liner:"外表是狼，内心是二哈，主打一个'你说东我偏往西'的快乐神经。",real_talk:"拆家届扛把子，独处就开拆；耐力工作犬运动量巨大，不遛够每天都在跟你斗智斗勇，新手慎入。"},
+  {id:"samoyed",name:"萨摩耶",size:"large",traits:{exercise:4,grooming:5,alone_tolerance:2,train_difficulty:3,budget:4},filters:{noise:4,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["微笑","黏人","爱叫"],one_liner:"一身雪白会微笑的天使脸，俗称'微笑天使'，治愈值拉满。",real_talk:"天使脸庞拆家手，那身白毛掉起来像下雪，伺候不好还爱叫，'天使'外号背后全是体力活。"},
+  {id:"alaskan_malamute",name:"阿拉斯加",size:"large",traits:{exercise:5,grooming:5,alone_tolerance:3,train_difficulty:5,budget:5},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["憨厚","固执","大块头"],one_liner:"比哈士奇大一圈的雪橇巨汉，憨厚老实但一身蛮力，是会拉雪橇的毛绒坦克。",real_talk:"食量和开销都是大型犬顶配，换毛季掉毛堪比灾难现场；力气大又有主见，新手很难驾驭。"},
+  {id:"shiba_inu",name:"柴犬",size:"medium",traits:{exercise:3,grooming:3,alone_tolerance:4,train_difficulty:4,budget:3},filters:{noise:2,hypoallergenic:false,good_with_kids:false,novice_friendly:false},personality:["独立","倔强","干净"],one_liner:"猫系狗，爱你但不腻你，一言不合就上演柴犬尖叫现场。",real_talk:"换毛季掉毛掉到怀疑人生，而且它根本不觉得自己需要听你的。"},
+  {id:"border_collie",name:"边境牧羊犬",size:"medium",traits:{exercise:5,grooming:3,alone_tolerance:2,train_difficulty:3,budget:3},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["聪明","精力旺","工作狂"],one_liner:"狗界学霸，你不给它派活儿，它就自己给家具排活儿。",real_talk:"聪明是真聪明，但每天不遛够两小时加动脑，它能把家拆了还嫌你不够忙。"},
+  {id:"german_shepherd",name:"德国牧羊犬",size:"large",traits:{exercise:4,grooming:4,alone_tolerance:2,train_difficulty:3,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["忠诚","护主","聪明"],one_liner:"全能优等生，对你死心塌地，对陌生人自带安检模式。",real_talk:"掉毛号称'德牧暴雪'，体型大食量大易有髋关节问题，养它得有体力也得有预算。"},
+  {id:"doberman_pinscher",name:"杜宾犬",size:"large",traits:{exercise:4,grooming:2,alone_tolerance:2,train_difficulty:3,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["机警","黏人","高智商"],one_liner:"看着像保镖，实则是要贴在你腿上的两百斤大宝宝。",real_talk:"短毛省打理，但精力旺、力气大、超黏人，独处久了容易焦虑，新手压不住它的强度。"},
+  {id:"great_pyrenees",name:"大白熊犬",size:"large",traits:{exercise:3,grooming:4,alone_tolerance:4,train_difficulty:4,budget:5},filters:{noise:4,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["沉稳","护卫","独立"],one_liner:"一座会呼吸的白色棉花山，白天岁月静好，半夜准时开嗓巡逻。",real_talk:"夜里爱叫、掉毛成片、固执到不爱听指令，巨型犬食量和医疗都是大开销。"},
+  {id:"chinese_rural_dog",name:"中华田园犬",size:"medium",traits:{exercise:3,grooming:2,alone_tolerance:4,train_difficulty:2,budget:2},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["忠诚","皮实","机灵"],one_liner:"被低估的国民好狗，皮实好养、忠诚护家，从不挑食也从不矫情。",real_talk:"天性警觉护主，看到生人会叫，需要从小社会化；血统杂、性格个体差异大。"},
+];
+
+// ============ 匹配算法（见 docs/decisions/matching-algorithm.md）============
+const SIZE_RANK = { small:1, medium:2, large:3 };
+const WEIGHTS = { exercise:1.5, alone:1.3, grooming:1.0, train:1.0, budget:1.0 };
+const MAX_PENALTY = Object.values(WEIGHTS).reduce((s,w)=>s+4*w, 0); // 23.2
+const DIM_LABEL = { exercise:"运动量", alone:"独处", grooming:"打理/掉毛", train:"好不好带", budget:"花销" };
+
+function collectAnswers(picks){
+  // picks: { qid: optionIndex }
+  const a = { exercise:3, alone_req:3, grooming:3, train:3, budget:3,
+              max_size:"large", max_noise:5, require:{}, pref:null };
+  QUESTIONS.forEach(q=>{
+    const opt = q.options[picks[q.id]];
+    if(!opt) return;
+    if(opt.scores) Object.assign(a, opt.scores);
+    if(opt.filters){
+      if(opt.filters.max_size) a.max_size = opt.filters.max_size;
+      if(opt.filters.max_noise!=null) a.max_noise = opt.filters.max_noise;
+      if(opt.filters.require_good_with_kids) a.require.kids = true;
+      if(opt.filters.require_hypoallergenic) a.require.hypo = true;
+    }
+    if(opt.pref) a.pref = opt.pref;
+  });
+  return a;
+}
+
+function hardFilter(dogs, a){
+  return dogs.filter(d=>{
+    if(SIZE_RANK[d.size] > SIZE_RANK[a.max_size]) return false;
+    if(d.filters.noise > a.max_noise) return false;
+    if(a.require.kids && !d.filters.good_with_kids) return false;
+    if(a.require.hypo && !d.filters.hypoallergenic) return false;
+    return true;
+  });
+}
+
+function scoreDog(d, a){
+  // 每个维度: gap = demand - supply, gap>0 重罚, gap<=0 轻罚
+  const dims = [
+    { key:"exercise", demand:d.traits.exercise,        supply:a.exercise },
+    { key:"alone",    demand:a.alone_req,               supply:d.traits.alone_tolerance },
+    { key:"grooming", demand:d.traits.grooming,         supply:a.grooming },
+    { key:"train",    demand:d.traits.train_difficulty, supply:a.train },
+    { key:"budget",   demand:d.traits.budget,           supply:a.budget },
+  ];
+  let penalty = 0;
+  const detail = [];
+  dims.forEach(dim=>{
+    const gap = dim.demand - dim.supply;
+    const w = WEIGHTS[dim.key];
+    const p = gap > 0 ? gap*w : Math.abs(gap)*w*0.2;
+    penalty += p;
+    detail.push({ key:dim.key, gap, penalty:p });
+  });
+  let score = 100 * (1 - penalty/MAX_PENALTY);
+  // 喜好加分
+  let prefBonus = 0;
+  if(a.pref){
+    if(a.pref.size && d.size===a.pref.size) prefBonus += 3;
+    if(a.pref.personality && d.personality.includes(a.pref.personality)) prefBonus += 3;
+  }
+  score += prefBonus;
+  return { score: Math.max(0, Math.min(100, Math.round(score))), detail, prefBonus };
+}
+
+function explain(d, detail){
+  // 命中点: gap<=0 选 2 条; 注意点: gap 最大那条
+  const good = detail.filter(x=>x.gap<=0).sort((a,b)=>a.gap-b.gap).slice(0,2);
+  const worst = detail.slice().sort((a,b)=>b.gap-a.gap)[0];
+  const goodTxt = good.map(g=>`你给得起「${DIM_LABEL[g.key]}」`);
+  let warn = null;
+  if(worst && worst.gap>0) warn = `要注意「${DIM_LABEL[worst.key]}」可能吃力`;
+  return { good:goodTxt, warn, real_talk:d.real_talk };
+}
+
+function personalityTag(a){
+  if(a.exercise>=4) return {tag:"出门撒野型", line:"你精力旺盛，适合能陪你一起跑跳的狗。"};
+  if(a.exercise<=2 && a.alone_req<=2) return {tag:"居家暖被窝型", line:"你时间多、爱宅，最适合黏人的小棉袄。"};
+  if(a.grooming<=2) return {tag:"精致洁癖型", line:"你受不了乱，得挑省心好打理的狗。"};
+  if(a.budget>=4) return {tag:"富养宠妈宠爸型", line:"你舍得花，狗跟着你享福。"};
+  if(a.train<=2) return {tag:"新手保命型", line:"你是新手，越省心好带的狗越合适。"};
+  return {tag:"随性养狗型", line:"你比较随和，大部分狗都能处得来。"};
+}
+
+function match(picks){
+  const a = collectAnswers(picks);
+  let pool = hardFilter(DOGS, a);
+  let relaxed = false;
+  if(pool.length===0){ // 放宽体型一级保底
+    relaxed = true;
+    const a2 = {...a, max_size:"large"};
+    pool = hardFilter(DOGS, a2);
+    if(pool.length===0) pool = DOGS.slice();
+  }
+  const ranked = pool.map(d=>{
+    const s = scoreDog(d, a);
+    return { dog:d, ...s, why:explain(d, s.detail) };
+  }).sort((x,y)=>y.score-x.score);
+  return { top: ranked.slice(0,3), tag:personalityTag(a), relaxed, poolSize:pool.length };
+}
+
+// ============ 渲染 ============
+const app = document.getElementById("app");
+let picks = {};
+let step = -1; // -1 落地页, 0..n-1 题目, n 结果
+
+function render(){
+  if(step===-1) return renderLanding();
+  if(step>=0 && step<QUESTIONS.length) return renderQuestion();
+  return renderResult();
+}
+
+function renderLanding(){
+  app.innerHTML = `
+    <div class="fade text-center pt-16">
+      <div class="text-6xl mb-6">🐶</div>
+      <h1 class="text-2xl font-bold mb-3">测测你适合养什么狗</h1>
+      <p class="text-stone-500 mb-1">9 道小题，3 分钟，告诉你哪只狗最适合你的生活。</p>
+      <p class="text-stone-400 text-sm mb-10">不只是好玩——帮你别养错。</p>
+      <button onclick="next()" class="bg-orange-500 text-white font-semibold px-10 py-3.5 rounded-full shadow-sm active:scale-95 transition">开始测试</button>
+      <p class="text-stone-300 text-xs mt-8">逻辑测试原型 · 视觉后续再做</p>
+    </div>`;
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[step];
+  const prog = Math.round((step)/QUESTIONS.length*100);
+  app.innerHTML = `
+    <div class="fade">
+      <div class="h-1 bg-stone-200 rounded-full mb-8 overflow-hidden">
+        <div class="h-full bg-orange-400 rounded-full transition-all" style="width:${prog}%"></div>
+      </div>
+      <div class="text-stone-400 text-sm mb-2">第 ${step+1} / ${QUESTIONS.length} 题</div>
+      <h2 class="text-xl font-bold mb-1.5 leading-snug">${q.text}</h2>
+      <p class="text-stone-400 text-sm mb-6">${q.subtitle||""}</p>
+      <div class="space-y-3">
+        ${q.options.map((o,i)=>`
+          <button onclick="pick('${q.id}',${i})"
+            class="w-full text-left px-5 py-4 rounded-2xl border bg-white border-stone-200 hover:border-orange-400 hover:bg-orange-50 active:scale-[.99] transition text-[15px] leading-relaxed">
+            ${o.label}
+          </button>`).join("")}
+      </div>
+      ${step>0?`<button onclick="back()" class="text-stone-400 text-sm mt-6">← 上一题</button>`:""}
+    </div>`;
+}
+
+function renderResult(){
+  const r = match(picks);
+  const best = r.top[0];
+  const tagBlock = `
+    <div class="bg-gradient-to-br from-orange-100 to-amber-50 rounded-3xl p-6 text-center mb-6">
+      <div class="text-stone-500 text-sm mb-1">你的养宠人格</div>
+      <div class="text-2xl font-bold text-orange-600 mb-1">${r.tag.tag}</div>
+      <div class="text-stone-500 text-sm">${r.tag.line}</div>
+    </div>`;
+  const card = (m, isBest)=>{
+    const why = m.why;
+    return `
+    <div class="bg-white rounded-3xl p-5 border ${isBest?'border-orange-300 shadow-sm':'border-stone-200'} mb-4">
+      ${isBest?`<div class="inline-block text-xs bg-orange-500 text-white px-2.5 py-0.5 rounded-full mb-2">最佳匹配</div>`:""}
+      <div class="flex items-baseline justify-between mb-1">
+        <h3 class="text-lg font-bold">${m.dog.name}</h3>
+        <span class="text-orange-500 font-bold">${m.score}<span class="text-xs text-stone-400 font-normal"> 分</span></span>
+      </div>
+      <p class="text-stone-600 text-sm mb-3 leading-relaxed">${m.dog.one_liner}</p>
+      <div class="space-y-1.5 text-sm">
+        ${why.good.map(g=>`<div class="text-emerald-600">✓ ${g}</div>`).join("")}
+        ${why.warn?`<div class="text-amber-600">⚠ ${why.warn}</div>`:""}
+      </div>
+      <div class="mt-3 pt-3 border-t border-stone-100 text-stone-400 text-xs leading-relaxed">说句实话：${why.real_talk}</div>
+    </div>`;
+  };
+  app.innerHTML = `
+    <div class="fade">
+      ${tagBlock}
+      ${r.relaxed?`<div class="text-amber-500 text-xs mb-3 text-center">符合所有硬条件的狗不多，已为你适当放宽</div>`:""}
+      ${card(best, true)}
+      <div class="text-stone-400 text-sm mb-2 mt-6">你可能也会喜欢</div>
+      ${r.top.slice(1).map(m=>card(m,false)).join("")}
+      <button onclick="reset()" class="w-full mt-4 border border-stone-300 text-stone-600 py-3 rounded-full active:scale-95 transition">重新测一次</button>
+      <details class="mt-6 text-xs text-stone-400">
+        <summary class="cursor-pointer">🔧 调试：候选池 ${r.poolSize} 只 / 看分数明细</summary>
+        <pre class="mt-2 bg-stone-100 p-3 rounded-lg overflow-x-auto">${r.top.map(m=>m.dog.name+": "+m.score+"  "+m.detail.map(d=>DIM_LABEL[d.key]+"gap"+d.gap).join(" ")).join("\n")}</pre>
+      </details>
+    </div>`;
+}
+
+window.next = ()=>{ step++; render(); };
+window.back = ()=>{ step--; render(); };
+window.reset = ()=>{ picks={}; step=-1; render(); };
+window.pick = (qid,i)=>{ picks[qid]=i; step++; render(); };
+render();
+</script>
+</body>
+</html>
