@@ -102,9 +102,10 @@ const DOGS = [
 
 // ============ 匹配算法（见 docs/decisions/matching-algorithm.md）============
 const SIZE_RANK = { small:1, medium:2, large:3 };
-const WEIGHTS = { exercise:1.5, alone:1.3, grooming:1.0, train:1.0, budget:1.0 };
-const MAX_PENALTY = Object.values(WEIGHTS).reduce((s,w)=>s+4*w, 0); // 23.2
-const DIM_LABEL = { exercise:"运动量", alone:"独处", grooming:"打理/掉毛", train:"好不好带", budget:"花销" };
+// noise 从硬过滤改为软性重扣分（合租扰邻是现实硬伤，权重高，但不一刀切空池子）
+const WEIGHTS = { exercise:1.5, noise:1.4, alone:1.3, grooming:1.0, train:1.0, budget:1.0 };
+const MAX_PENALTY = Object.values(WEIGHTS).reduce((s,w)=>s+4*w, 0); // 28.8
+const DIM_LABEL = { exercise:"运动量", noise:"安静程度", alone:"独处", grooming:"打理/掉毛", train:"好不好带", budget:"花销" };
 
 function collectAnswers(picks){
   // picks: { qid: optionIndex }
@@ -128,7 +129,6 @@ function collectAnswers(picks){
 function hardFilter(dogs, a){
   return dogs.filter(d=>{
     if(SIZE_RANK[d.size] > SIZE_RANK[a.max_size]) return false;
-    if(d.filters.noise > a.max_noise) return false;
     if(a.require.kids && !d.filters.good_with_kids) return false;
     if(a.require.hypo && !d.filters.hypoallergenic) return false;
     return true;
@@ -139,6 +139,7 @@ function scoreDog(d, a){
   // 每个维度: gap = demand - supply, gap>0 重罚, gap<=0 轻罚
   const dims = [
     { key:"exercise", demand:d.traits.exercise,        supply:a.exercise },
+    { key:"noise",    demand:d.filters.noise,           supply:a.max_noise },
     { key:"alone",    demand:a.alone_req,               supply:d.traits.alone_tolerance },
     { key:"grooming", demand:d.traits.grooming,         supply:a.grooming },
     { key:"train",    demand:d.traits.train_difficulty, supply:a.train },

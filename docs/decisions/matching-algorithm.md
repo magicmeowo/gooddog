@@ -8,9 +8,11 @@
 ### Step 1 · 门槛过滤（硬约束做减法）
 读 type=hard 的题答案，排除明显不合适的狗：
 - `max_size`（住房）：排除体型超过上限的狗（small < medium < large）
-- `max_noise`（环境）：排除 `filters.noise` 超过上限的狗
 - `require_good_with_kids`：只留 `good_with_kids: true`
 - `require_hypoallergenic`：只留 `hypoallergenic: true`
+
+> ⚠️ v1.1 调整：**吵闹（noise）原为硬过滤，已改为软性重扣分**（见 Step 2）。
+> 原因：原型实测发现「合租必须安静」一刀切后，小型犬池子常被砍到只剩 2 只，被迫推出自相矛盾的狗。改成重扣分后，安静的狗仍优先，但不会空池。
 
 > 过滤后若候选池为空，放宽最不致命的一条（体型可放宽一级），保证有结果。
 
@@ -22,6 +24,7 @@
 | 维度 | 需求(demand) | 供给(supply) | 权重 |
 |---|---|---|---|
 | exercise 运动 | 狗.exercise | 用户活力(q_morning) | 1.5 |
+| noise 吵闹 | 狗.noise | 用户容忍(q_neighbor) | 1.4 |
 | alone 独处 | 用户需独处时长(q_away) | 狗.alone_tolerance | 1.3 |
 | grooming 打理 | 狗.grooming | 用户忍受度(q_mess) | 1.0 |
 | train 训练 | 狗.train_difficulty | 用户经验(q_experience) | 1.0 |
@@ -31,7 +34,7 @@
 gap = demand - supply
 if gap > 0:  penalty += gap * 权重          // 狗超出用户，重罚
 else:        penalty += |gap| * 权重 * 0.2  // 用户富余，轻罚
-matchScore = round(100 * (1 - penalty / maxPenalty))   // maxPenalty = Σ 4*权重 = 23.2
+matchScore = round(100 * (1 - penalty / maxPenalty))   // maxPenalty = Σ 4*权重 = 28.8
 ```
 
 注意：alone 维度方向是反的——用户那边是"需要狗独处多久"(需求)，狗那边是"能独处的能力"(供给)。其余维度都是狗=需求、用户=供给。
