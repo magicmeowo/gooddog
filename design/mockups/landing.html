@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoodDog · 找到刚好适合你的狗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== design tokens (来自 design/tokens.json) ===== */
+:root{
+  --paper:#F6F0E4; --paper-deep:#EEE6D4; --card:#FCFAF4;
+  --ink:#2B2622; --ink-soft:#6B6258; --ink-faint:#9C9285;
+  --clay:#B14A26; --clay-deep:#8F3A1C; --clay-tint:#F0DECF;
+  --sage:#4F6B43; --ochre:#A9761F;
+  --line:#DCD1BC; --line-soft:#E8DECC;
+  --f-display:'Fraunces','Noto Serif SC',serif;
+  --f-head:'Noto Serif SC','Songti SC',serif;
+  --f-body:'Noto Sans SC',-apple-system,'PingFang SC',sans-serif;
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:var(--f-body); color:var(--ink);
+  background:var(--paper-deep);
+  display:flex; justify-content:center;
+  -webkit-font-smoothing:antialiased;
+}
+/* 纸张纹理：极轻的噪点叠加，非渐变 */
+.grain{position:fixed; inset:0; pointer-events:none; opacity:.04; z-index:50;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* 移动优先：内容容器 = 一本小册子 */
+.book{
+  width:100%; max-width:430px; min-height:100vh; background:var(--paper);
+  position:relative; overflow:hidden;
+  box-shadow:0 0 0 1px var(--line-soft), 0 30px 80px rgba(43,38,34,.12);
+  padding:26px 28px 40px;
+  display:flex; flex-direction:column;
+}
+
+/* 报头 */
+.masthead{display:flex; align-items:center; justify-content:space-between;
+  padding-bottom:14px; border-bottom:1.5px solid var(--ink);}
+.wordmark{font-family:var(--f-display); font-weight:600; font-size:21px; letter-spacing:-.01em;
+  display:flex; align-items:center; gap:7px;}
+.wordmark .dot{width:7px;height:7px;border-radius:50%;background:var(--clay);display:inline-block}
+.issue{font-family:var(--f-display); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-soft); text-align:right; line-height:1.4;}
+
+/* 副栏小标 */
+.kicker{font-family:var(--f-display); font-style:italic; font-size:14px; color:var(--clay);
+  margin-top:26px; letter-spacing:.01em;}
+
+/* 主标题 */
+h1{font-family:var(--f-head); font-weight:900; font-size:43px; line-height:1.2;
+  letter-spacing:-.01em; margin-top:10px; color:var(--ink);}
+h1 .em{color:var(--clay); position:relative; white-space:nowrap; display:inline-block;}
+/* 手绘下划线：强调字在末行，下方是空白，绝不压字 */
+h1 .em svg{position:absolute; left:-1%; bottom:-9px; width:102%; height:9px;}
+
+.lede{font-size:15.5px; line-height:1.85; color:var(--ink-soft); margin-top:22px; max-width:30ch;}
+.lede b{color:var(--ink); font-weight:500;}
+
+/* 插画 */
+.art{margin:18px auto 6px; width:230px; max-width:72%;}
+.art svg{width:100%; height:auto; display:block;}
+
+/* CTA */
+.cta-wrap{margin-top:auto; padding-top:26px;}
+.cta{display:flex; align-items:center; justify-content:center; gap:10px;
+  width:100%; min-height:56px; background:var(--clay); color:#FCF7EE;
+  font-family:var(--f-body); font-weight:500; font-size:17px; letter-spacing:.02em;
+  border:none; border-radius:14px; cursor:pointer;
+  box-shadow:0 2px 0 var(--clay-deep), 0 10px 24px rgba(177,74,38,.22);
+  transition:transform var(--ease) .18s, box-shadow var(--ease) .18s;}
+.cta:hover{transform:translateY(-1px); box-shadow:0 3px 0 var(--clay-deep),0 16px 32px rgba(177,74,38,.28);}
+.cta:active{transform:translateY(1px); box-shadow:0 1px 0 var(--clay-deep),0 6px 16px rgba(177,74,38,.2);}
+.cta svg{width:18px;height:18px}
+
+.trust{display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:16px; font-size:11.5px; color:var(--ink-faint); letter-spacing:.04em;}
+.trust .seal{width:14px;height:14px}
+.dotsep{width:3px;height:3px;border-radius:50%;background:var(--ink-faint);display:inline-block}
+
+/* 载入动画：错峰揭幕 */
+.reveal{opacity:0; transform:translateY(14px); animation:rise .7s var(--ease) forwards;}
+@keyframes rise{to{opacity:1; transform:none}}
+.d1{animation-delay:.05s}.d2{animation-delay:.16s}.d3{animation-delay:.28s}
+.d4{animation-delay:.42s}.d5{animation-delay:.56s}.d6{animation-delay:.7s}
+@media (prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<main class="book">
+
+  <header class="masthead reveal d1">
+    <div class="wordmark">GoodDog<span class="dot"></span></div>
+    <div class="issue">犬种适配指南<br>No.01 · 25 个品种</div>
+  </header>
+
+  <div class="kicker reveal d2">A field guide to your perfect dog</div>
+
+  <h1 class="reveal d2">
+    帮你找到<br>
+    <span class="em">刚好适合你的狗<svg viewBox="0 0 320 10" preserveAspectRatio="none"><path d="M2,7 C64,2 128,2 190,5 C238,7 280,5 318,3" stroke="#B14A26" stroke-width="3" fill="none" stroke-linecap="round"/></svg></span>
+  </h1>
+
+  <p class="lede reveal d3">
+    9 道小题，3 分钟。<br>
+    不靠星座、不靠眼缘——<b>从你的生活方式出发，帮你别养错。</b>
+  </p>
+
+  <div class="art reveal d4">
+    <!-- 田野手册风 · 单色线描坐姿狗 -->
+    <svg viewBox="0 0 240 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#2B2622" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+        <!-- 耳朵 -->
+        <path d="M84,70 C70,40 74,28 92,40 C100,46 104,56 106,66" fill="#F0DECF"/>
+        <path d="M156,70 C170,40 166,28 148,40 C140,46 136,56 134,66" fill="#F0DECF"/>
+        <!-- 头 -->
+        <path d="M82,78 C82,52 110,44 120,44 C130,44 158,52 158,78 C158,104 140,118 120,118 C100,118 82,104 82,78Z" fill="#FCFAF4"/>
+        <!-- 口鼻 -->
+        <path d="M104,96 C104,86 136,86 136,96 C136,110 126,118 120,118 C114,118 104,110 104,96Z" fill="#F6F0E4"/>
+        <!-- 身体坐姿 -->
+        <path d="M120,116 C150,116 168,150 168,182 C168,196 150,198 120,198 C90,198 72,196 72,182 C72,150 90,116 120,116Z" fill="#FCFAF4"/>
+        <!-- 前腿 -->
+        <path d="M104,170 L104,196" /><path d="M136,170 L136,196"/>
+      </g>
+      <!-- 五官点 -->
+      <circle cx="106" cy="84" r="3.6" fill="#2B2622"/>
+      <circle cx="134" cy="84" r="3.6" fill="#2B2622"/>
+      <path d="M114,99 C114,95 126,95 126,99 C126,103 122,106 120,106 C118,106 114,103 114,99Z" fill="#B14A26"/>
+      <!-- 腮红/小尾巴点缀 -->
+      <path d="M168,150 C184,142 190,128 178,124 C170,121 164,132 164,142" stroke="#2B2622" stroke-width="3.4" fill="#F0DECF" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <div class="cta-wrap reveal d5">
+    <button class="cta" onclick="location.href='prototype.html'">
+      开始测试
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>
+    <div class="trust reveal d6">
+      <svg class="seal" viewBox="0 0 24 24" fill="none" stroke="#9C9285" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      基于 AKC 犬种特性数据
+      <span class="dotsep"></span>
+      不收集个人信息
+    </div>
+  </div>
+
+</main>
+</body>
+</html>
