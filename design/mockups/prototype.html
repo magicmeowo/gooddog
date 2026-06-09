@@ -160,52 +160,2656 @@ body{font-family:var(--f-body); color:var(--ink); background:var(--paper-deep);
 <script>
 /* ============ 数据（来自 data/mock）============ */
 const QUESTIONS = [
-  { id:"q_morning", type:"soft", text:"想象一个完美的周末早晨，你更想——", subtitle:"凭直觉选，没有标准答案",
-    options:[{label:"😴 窝在床上睡到自然醒，谁也别叫我",scores:{exercise:1}},{label:"☕️ 慢悠悠起床，楼下遛个弯买杯咖啡",scores:{exercise:3}},{label:"🌅 六点起来跑步 / 爬山，精神得很",scores:{exercise:5}}]},
-  { id:"q_home", type:"hard", text:"你现在住的地方是——", subtitle:"决定能不能养大狗的硬条件",
-    options:[{label:"🏢 城市里的小公寓 / 出租屋",filters:{max_size:"small"}},{label:"🏠 普通三居室，空间还行",filters:{max_size:"medium"}},{label:"🌳 大房子，甚至有院子 / 一楼带花园",filters:{max_size:"large"}}]},
-  { id:"q_neighbor", type:"hard", text:"如果半夜有点动静，你的居住环境——", subtitle:"悄悄在问：怕不怕狗叫扰邻",
-    options:[{label:"🤫 合租 / 墙薄 / 邻居敏感，必须安静",filters:{max_noise:2}},{label:"🙂 还好，偶尔叫两声没人管",filters:{max_noise:3}},{label:"🎉 独栋 / 隔音好，叫破天也无所谓",filters:{max_noise:5}}]},
-  { id:"q_household", type:"hard", text:"家里除了你，还有谁会跟狗朝夕相处？", subtitle:"可能藏着过敏和安全的坑",
-    options:[{label:"🧍 就我一个，自由",filters:{}},{label:"👶 有小孩 / 老人",filters:{require_good_with_kids:true}},{label:"🤧 有人对毛过敏 / 有洁癖",filters:{require_hypoallergenic:true}},{label:"🐈 已经有别的猫猫狗狗了",filters:{}}]},
-  { id:"q_away", type:"soft", text:"工作日里，狗大概要独自在家——", subtitle:"测它能不能忍受独处",
-    options:[{label:"🌙 我经常加班 / 出差，它得自己待大半天",scores:{alone_req:5}},{label:"🏃 朝九晚六，白天没人但晚上都在",scores:{alone_req:3}},{label:"🏡 我居家办公 / 时间自由，基本全天有人",scores:{alone_req:1}}]},
-  { id:"q_mess", type:"soft", text:"沙发上落了一层狗毛、地上一个泥脚印，你的反应是——", subtitle:"测对掉毛和打理的忍受度",
-    options:[{label:"😩 受不了，我希望家里一直干干净净",scores:{grooming:1}},{label:"😅 打扫一下就好，能接受适度乱",scores:{grooming:3}},{label:"😎 无所谓，狗毛是爱的形状",scores:{grooming:5}}]},
-  { id:"q_experience", type:"soft", text:"面对一只调皮、不太听话、还有点犟的狗，你——", subtitle:"测经验和耐心，决定能不能驾驭",
-    options:[{label:"🆘 完全没养过，希望它天生乖、好带",scores:{train:1}},{label:"🙂 没太多经验，但愿意学、愿意花时间",scores:{train:3}},{label:"💪 我养过狗 / 很有耐心，再犟也能搞定",scores:{train:5}}]},
-  { id:"q_budget", type:"soft", text:"每个月愿意为狗花的钱，大概是——", subtitle:"狗粮、医疗、美容都在里面",
-    options:[{label:"💰 精打细算，越省心省钱越好",scores:{budget:1}},{label:"💳 中等，合理范围内不心疼",scores:{budget:3}},{label:"🤑 不差钱，只要它过得好",scores:{budget:5}}]},
-  { id:"q_vibe", type:"pref", text:"最后一题凭感觉——你理想中的狗狗是？", subtitle:"这题只影响排序，不影响合不合适",
-    options:[{label:"🧸 小小一只、软萌可爱，能抱在怀里",pref:{size:"small",personality:"黏人"}},{label:"🐺 帅气有型、有点酷，遛出去有面子",pref:{size:"large",personality:"独立"}},{label:"🥰 温柔粘人的大暖男 / 暖女",pref:{size:"large",personality:"温顺"}},{label:"🤹 古灵精怪、活泼爱玩的开心果",pref:{personality:"活泼"}}]},
+ {
+  "id": "q_morning",
+  "type": "soft",
+  "text": "想象一个完美的周末早晨，你更想——",
+  "subtitle": "凭直觉选，没有标准答案",
+  "options": [
+   {
+    "label": "😴 窝在床上睡到自然醒，谁也别叫我",
+    "scores": {
+     "exercise": 1
+    }
+   },
+   {
+    "label": "☕️ 慢悠悠起床，楼下遛个弯买杯咖啡",
+    "scores": {
+     "exercise": 3
+    }
+   },
+   {
+    "label": "🌅 六点起来跑步 / 爬山，精神得很",
+    "scores": {
+     "exercise": 5
+    }
+   }
+  ]
+ },
+ {
+  "id": "q_home",
+  "type": "hard",
+  "text": "你现在住的地方是——",
+  "subtitle": "决定能不能养大狗的硬条件",
+  "options": [
+   {
+    "label": "🏢 城市里的小公寓 / 出租屋",
+    "filters": {
+     "max_size": "small"
+    }
+   },
+   {
+    "label": "🏠 普通三居室，空间还行",
+    "filters": {
+     "max_size": "medium"
+    }
+   },
+   {
+    "label": "🌳 大房子，甚至有院子 / 一楼带花园",
+    "filters": {
+     "max_size": "large"
+    }
+   }
+  ]
+ },
+ {
+  "id": "q_neighbor",
+  "type": "hard",
+  "text": "如果半夜有点动静，你的居住环境——",
+  "subtitle": "悄悄在问：怕不怕狗叫扰邻",
+  "options": [
+   {
+    "label": "🤫 合租 / 墙薄 / 邻居敏感，必须安静",
+    "filters": {
+     "max_noise": 2
+    }
+   },
+   {
+    "label": "🙂 还好，偶尔叫两声没人管",
+    "filters": {
+     "max_noise": 3
+    }
+   },
+   {
+    "label": "🎉 独栋 / 隔音好，叫破天也无所谓",
+    "filters": {
+     "max_noise": 5
+    }
+   }
+  ]
+ },
+ {
+  "id": "q_household",
+  "type": "hard",
+  "text": "家里除了你，还有谁会跟狗朝夕相处？",
+  "subtitle": "可能藏着过敏和安全的坑",
+  "options": [
+   {
+    "label": "🧍 就我一个，自由",
+    "filters": {}
+   },
+   {
+    "label": "👶 有小孩 / 老人",
+    "filters": {
+     "require_good_with_kids": true
+    }
+   },
+   {
+    "label": "🤧 有人对毛过敏 / 有洁癖",
+    "filters": {
+     "require_hypoallergenic": true
+    }
+   },
+   {
+    "label": "🐈 已经有别的猫猫狗狗了",
+    "filters": {}
+   }
+  ]
+ },
+ {
+  "id": "q_away",
+  "type": "soft",
+  "text": "工作日里，狗大概要独自在家——",
+  "subtitle": "测它能不能忍受独处",
+  "options": [
+   {
+    "label": "🌙 我经常加班 / 出差，它得自己待大半天",
+    "scores": {
+     "alone_req": 5
+    }
+   },
+   {
+    "label": "🏃 朝九晚六，白天没人但晚上都在",
+    "scores": {
+     "alone_req": 3
+    }
+   },
+   {
+    "label": "🏡 我居家办公 / 时间自由，基本全天有人",
+    "scores": {
+     "alone_req": 1
+    }
+   }
+  ]
+ },
+ {
+  "id": "q_mess",
+  "type": "soft",
+  "text": "沙发上落了一层狗毛、地上一个泥脚印，你的反应是——",
+  "subtitle": "测对掉毛和打理的忍受度",
+  "options": [
+   {
+    "label": "😩 受不了，我希望家里一直干干净净",
+    "scores": {
+     "grooming": 1
+    }
+   },
+   {
+    "label": "😅 打扫一下就好，能接受适度乱",
+    "scores": {
+     "grooming": 3
+    }
+   },
+   {
+    "label": "😎 无所谓，狗毛是爱的形状",
+    "scores": {
+     "grooming": 5
+    }
+   }
+  ]
+ },
+ {
+  "id": "q_experience",
+  "type": "soft",
+  "text": "面对一只调皮、不太听话、还有点犟的狗，你——",
+  "subtitle": "测经验和耐心，决定能不能驾驭",
+  "options": [
+   {
+    "label": "🆘 完全没养过，希望它天生乖、好带",
+    "scores": {
+     "train": 1
+    }
+   },
+   {
+    "label": "🙂 没太多经验，但愿意学、愿意花时间",
+    "scores": {
+     "train": 3
+    }
+   },
+   {
+    "label": "💪 我养过狗 / 很有耐心，再犟也能搞定",
+    "scores": {
+     "train": 5
+    }
+   }
+  ]
+ },
+ {
+  "id": "q_budget",
+  "type": "soft",
+  "text": "每个月愿意为狗花的钱，大概是——",
+  "subtitle": "狗粮、医疗、美容都在里面",
+  "options": [
+   {
+    "label": "💰 精打细算，越省心省钱越好",
+    "scores": {
+     "budget": 1
+    }
+   },
+   {
+    "label": "💳 中等，合理范围内不心疼",
+    "scores": {
+     "budget": 3
+    }
+   },
+   {
+    "label": "🤑 不差钱，只要它过得好",
+    "scores": {
+     "budget": 5
+    }
+   }
+  ]
+ },
+ {
+  "id": "q_size",
+  "type": "pref",
+  "text": "接下来聊聊长相——你更想要多大的狗？",
+  "subtitle": "以下只影响排序，不影响合不合适",
+  "options": [
+   {
+    "label": "🧸 小小一只，能抱在怀里",
+    "pref": {
+     "type": "size",
+     "value": "small"
+    }
+   },
+   {
+    "label": "🐕 中等个头，刚刚好",
+    "pref": {
+     "type": "size",
+     "value": "medium"
+    }
+   },
+   {
+    "label": "🐺 有存在感的大块头",
+    "pref": {
+     "type": "size",
+     "value": "large"
+    }
+   },
+   {
+    "label": "🤷 都行，不在意体型",
+    "pref": null
+   }
+  ]
+ },
+ {
+  "id": "q_coat",
+  "type": "pref",
+  "text": "毛发上你更偏爱——",
+  "subtitle": "长毛好看但费打理，短毛利落省心",
+  "options": [
+   {
+    "label": "🌾 长毛飘逸，有造型感",
+    "pref": {
+     "type": "coat_length",
+     "value": "long"
+    }
+   },
+   {
+    "label": "✨ 短毛利落，好打理",
+    "pref": {
+     "type": "coat_length",
+     "value": "short"
+    }
+   },
+   {
+    "label": "🤷 没偏好",
+    "pref": null
+   }
+  ]
+ },
+ {
+  "id": "q_color",
+  "type": "pref",
+  "text": "毛色上你偏爱哪种？",
+  "subtitle": "凭眼缘选",
+  "options": [
+   {
+    "label": "🤍 浅色系（白 / 奶油 / 金黄）",
+    "pref": {
+     "type": "coat_color",
+     "value": "浅色"
+    }
+   },
+   {
+    "label": "🖤 深色系（黑 / 棕 / 灰）",
+    "pref": {
+     "type": "coat_color",
+     "value": "深色"
+    }
+   },
+   {
+    "label": "🐾 花色斑纹（双色 / 斑点 / 虎斑）",
+    "pref": {
+     "type": "coat_color",
+     "value": "花色"
+    }
+   },
+   {
+    "label": "🤷 没偏好",
+    "pref": null
+   }
+  ]
+ },
+ {
+  "id": "q_look",
+  "type": "pref",
+  "text": "最后——哪种长相更让你心动？",
+  "subtitle": "颜值这关也得过",
+  "options": [
+   {
+    "label": "🥰 奶萌可爱",
+    "pref": {
+     "type": "look_style",
+     "value": "奶萌"
+    }
+   },
+   {
+    "label": "😎 帅气威风",
+    "pref": {
+     "type": "look_style",
+     "value": "帅气"
+    }
+   },
+   {
+    "label": "🧸 憨厚老实",
+    "pref": {
+     "type": "look_style",
+     "value": "憨厚"
+    }
+   },
+   {
+    "label": "👑 优雅高贵",
+    "pref": {
+     "type": "look_style",
+     "value": "优雅"
+    }
+   },
+   {
+    "label": "🤷 没偏好",
+    "pref": null
+   }
+  ]
+ }
 ];
 
 const DOGS = [
-  {id:"poodle",name:"泰迪/贵宾",name_en:"Poodle",size:"small",traits:{exercise:4,grooming:4,alone_tolerance:2,train_difficulty:1,budget:3},filters:{noise:3,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["聪明","黏人","爱玩"],one_liner:"狗界优等生，你说啥它懂啥，学新动作快得让你怀疑它偷看了说明书。",real_talk:"卷毛不掉但会一直长，不修剪就成流浪汉，美容店是你每月固定开销。"},
-  {id:"bichon",name:"比熊",name_en:"Bichon Frise",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:2,train_difficulty:2,budget:3},filters:{noise:3,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["亲人","开朗","爱粘人"],one_liner:"行走的棉花糖，一天到晚乐呵呵，见谁都觉得你是来爱它的。",real_talk:"白毛娃容易泪痕和打结，不天天打理就脏脏丑丑，剃毛修剪也省不了。"},
-  {id:"pomeranian",name:"博美",name_en:"Pomeranian",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:3,train_difficulty:3,budget:3},filters:{noise:4,hypoallergenic:false,good_with_kids:false,novice_friendly:true},personality:["机灵","爱叫","有主见"],one_liner:"两斤重的小狮子，胆子比身体大十倍，门口有响动它第一个冲上去汪汪汪。",real_talk:"双层毛掉得欢、换毛季满屋飞絮，而且是个话痨，楼薄邻居敏感的慎入。"},
-  {id:"french_bulldog",name:"法斗",name_en:"French Bulldog",size:"small",traits:{exercise:2,grooming:3,alone_tolerance:2,train_difficulty:3,budget:5},filters:{noise:1,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["憨厚","黏人","安静"],one_liner:"沙发挂件本件，不爱叫不爱动，最大爱好是趴你腿上发出小猪呼噜。",real_talk:"短鼻子是病包，呼吸道、皮肤、关节都容易出问题，怕热不能剧烈运动，医药费是真烧钱。"},
-  {id:"pug",name:"巴哥",name_en:"Pug",size:"small",traits:{exercise:2,grooming:4,alone_tolerance:3,train_difficulty:3,budget:4},filters:{noise:2,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["逗趣","随和","贪吃"],one_liner:"自带喜剧效果的小胖子，散步二十分钟就够，剩下时间负责卖萌和打呼噜。",real_talk:"短毛但掉成灾、被叫'掉毛怪'，脸褶要天天擦，短鼻同样怕热易生病、还特能吃容易胖。"},
-  {id:"chihuahua",name:"吉娃娃",name_en:"Chihuahua",size:"small",traits:{exercise:2,grooming:2,alone_tolerance:3,train_difficulty:3,budget:2},filters:{noise:4,hypoallergenic:false,good_with_kids:false,novice_friendly:true},personality:["警惕","护主","小炮仗"],one_liner:"体重一斤气场一吨，认准一个主人死忠护卫，谁靠太近它先警告三声。",real_talk:"爱叫又容易护食凶人，对陌生人和小孩不太友好，养它得接受它的小脾气。"},
-  {id:"maltese",name:"马尔济斯",name_en:"Maltese",size:"small",traits:{exercise:2,grooming:4,alone_tolerance:2,train_difficulty:2,budget:3},filters:{noise:3,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["温柔","黏人","优雅"],one_liner:"披着白丝绸的小贵族，温柔又黏人，最喜欢窝你怀里当个安静的小美人。",real_talk:"一身白长毛是面子工程，不天天梳就打结、眼周泪痕擦不及，太黏人独处久了会焦虑。"},
-  {id:"corgi",name:"柯基",name_en:"Pembroke Welsh Corgi",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:3,train_difficulty:3,budget:3},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["活泼","聪明","固执"],one_liner:"腿短一截的牧羊犬，自以为是大狗，能跟你跑能跟你犟，屁股扭起来全场最佳。",real_talk:"双层毛一年掉两季、平时也天天掉，沙发地板全是毛；脾气倔，叫起来嗓门不小。"},
-  {id:"miniature_schnauzer",name:"雪纳瑞",name_en:"Miniature Schnauzer",size:"small",traits:{exercise:3,grooming:4,alone_tolerance:3,train_difficulty:2,budget:3},filters:{noise:4,hypoallergenic:true,good_with_kids:true,novice_friendly:true},personality:["机灵","爱叫","黏人"],one_liner:"顶着老头眉毛和大胡子的小硬汉，聪明伶俐还不怎么掉毛，是出了名的省心搭子。",real_talk:"毛不掉但要花钱：每5-8周得修剪一次；而且是个话痨，门口有动静必报告。"},
-  {id:"dachshund",name:"腊肠",name_en:"Dachshund",size:"small",traits:{exercise:2,grooming:2,alone_tolerance:3,train_difficulty:4,budget:3},filters:{noise:5,hypoallergenic:false,good_with_kids:false,novice_friendly:false},personality:["勇猛","固执","护主"],one_liner:"一根会走路的小香肠，胆子比身子大十倍，认定的事九头牛都拉不回来。",real_talk:"嗓门巨大、特别爱叫，又倔又有主见不好训；身子长容易椎间盘出问题，得防着别让它乱跳。"},
-  {id:"yorkshire_terrier",name:"约克夏",name_en:"Yorkshire Terrier",size:"small",traits:{exercise:2,grooming:4,alone_tolerance:2,train_difficulty:3,budget:3},filters:{noise:4,hypoallergenic:true,good_with_kids:false,novice_friendly:true},personality:["黏人","倔强","爱叫"],one_liner:"巴掌大的迷你贵妇，一身丝绸长发能拖地，骨子里却是个天不怕地不怕的小梗犬。",real_talk:"毛少不咋掉，但留长发要天天打理、还得花钱修剪；很黏人、需求没满足就开嗓。"},
-  {id:"papillon",name:"蝴蝶犬",name_en:"Papillon",size:"small",traits:{exercise:3,grooming:3,alone_tolerance:3,train_difficulty:2,budget:2},filters:{noise:3,hypoallergenic:true,good_with_kids:false,novice_friendly:true},personality:["聪明","敏捷","亲人"],one_liner:"顶着两片蝴蝶大耳朵的小机灵鬼，是玩具犬里出了名的学霸，敏捷赛场上常拿冠军。",real_talk:"脑子太好用，闲着会自己找乐子；长饰毛每周得梳几次；体型娇小，磕碰得当心。"},
-  {id:"beagle",name:"比格",name_en:"Beagle",size:"small",traits:{exercise:4,grooming:3,alone_tolerance:2,train_difficulty:4,budget:3},filters:{noise:5,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["欢乐","贪吃","鼻子至上"],one_liner:"永远开心、永远在闻地的快乐小猎犬，鼻子一带电整条狗就失联，跟谁都自来熟。",real_talk:"会嚎会吠嗓门感人、容易扰邻；鼻子一带头就不听召唤，固执难训；超能吃要防胖。"},
-  {id:"cocker_spaniel",name:"可卡",name_en:"Cocker Spaniel",size:"medium",traits:{exercise:3,grooming:5,alone_tolerance:2,train_difficulty:2,budget:4},filters:{noise:2,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["温柔","亲人","讨喜"],one_liner:"一双水汪汪大眼配上波浪长耳，性子温软又黏人，是公认的家庭暖心担当。",real_talk:"一身长毛是个无底洞：要常梳、定期修剪很费钱；大耳朵不透气特别容易耳道发炎。"},
-  {id:"golden_retriever",name:"金毛",name_en:"Golden Retriever",size:"large",traits:{exercise:4,grooming:5,alone_tolerance:2,train_difficulty:1,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["温顺","聪明","亲人"],one_liner:"走在路上谁都想摸两把的人见人爱大暖男，把'快乐'写在脸上。",real_talk:"掉毛是真的猛，换毛季家里能再'养'出一条狗；而且精力旺，不遛它它能把你的拖鞋一只只叼走。"},
-  {id:"labrador_retriever",name:"拉布拉多",name_en:"Labrador Retriever",size:"large",traits:{exercise:5,grooming:4,alone_tolerance:2,train_difficulty:1,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["热情","好训","贪吃"],one_liner:"全世界最好训的狗之一，导盲犬天花板，唯一的人生目标是吃和讨好你。",real_talk:"精力是真旺，幼年期能拆家拆到你怀疑人生；而且嘴特别馋，不控食量分分钟胖成猪。"},
-  {id:"siberian_husky",name:"哈士奇",name_en:"Siberian Husky",size:"medium",traits:{exercise:5,grooming:4,alone_tolerance:1,train_difficulty:5,budget:3},filters:{noise:4,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["固执","话痨","精力爆表"],one_liner:"外表是狼，内心是二哈，主打一个'你说东我偏往西'的快乐神经。",real_talk:"拆家届扛把子，独处就开拆；耐力工作犬运动量巨大，不遛够每天都在跟你斗智斗勇，新手慎入。"},
-  {id:"samoyed",name:"萨摩耶",name_en:"Samoyed",size:"large",traits:{exercise:4,grooming:5,alone_tolerance:2,train_difficulty:3,budget:4},filters:{noise:4,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["微笑","黏人","爱叫"],one_liner:"一身雪白会微笑的天使脸，俗称'微笑天使'，治愈值拉满。",real_talk:"天使脸庞拆家手，那身白毛掉起来像下雪，伺候不好还爱叫，'天使'外号背后全是体力活。"},
-  {id:"alaskan_malamute",name:"阿拉斯加",name_en:"Alaskan Malamute",size:"large",traits:{exercise:5,grooming:5,alone_tolerance:3,train_difficulty:5,budget:5},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["憨厚","固执","大块头"],one_liner:"比哈士奇大一圈的雪橇巨汉，憨厚老实但一身蛮力，是会拉雪橇的毛绒坦克。",real_talk:"食量和开销都是大型犬顶配，换毛季掉毛堪比灾难现场；力气大又有主见，新手很难驾驭。"},
-  {id:"shiba_inu",name:"柴犬",name_en:"Shiba Inu",size:"medium",traits:{exercise:3,grooming:3,alone_tolerance:4,train_difficulty:4,budget:3},filters:{noise:2,hypoallergenic:false,good_with_kids:false,novice_friendly:false},personality:["独立","倔强","干净"],one_liner:"猫系狗，爱你但不腻你，一言不合就上演柴犬尖叫现场。",real_talk:"换毛季掉毛掉到怀疑人生，而且它根本不觉得自己需要听你的。"},
-  {id:"border_collie",name:"边境牧羊犬",name_en:"Border Collie",size:"medium",traits:{exercise:5,grooming:3,alone_tolerance:2,train_difficulty:3,budget:3},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["聪明","精力旺","工作狂"],one_liner:"狗界学霸，你不给它派活儿，它就自己给家具排活儿。",real_talk:"聪明是真聪明，但每天不遛够两小时加动脑，它能把家拆了还嫌你不够忙。"},
-  {id:"german_shepherd",name:"德国牧羊犬",name_en:"German Shepherd",size:"large",traits:{exercise:4,grooming:4,alone_tolerance:2,train_difficulty:3,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["忠诚","护主","聪明"],one_liner:"全能优等生，对你死心塌地，对陌生人自带安检模式。",real_talk:"掉毛号称'德牧暴雪'，体型大食量大易有髋关节问题，养它得有体力也得有预算。"},
-  {id:"doberman_pinscher",name:"杜宾犬",name_en:"Doberman Pinscher",size:"large",traits:{exercise:4,grooming:2,alone_tolerance:2,train_difficulty:3,budget:4},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["机警","黏人","高智商"],one_liner:"看着像保镖，实则是要贴在你腿上的两百斤大宝宝。",real_talk:"短毛省打理，但精力旺、力气大、超黏人，独处久了容易焦虑，新手压不住它的强度。"},
-  {id:"great_pyrenees",name:"大白熊犬",name_en:"Great Pyrenees",size:"large",traits:{exercise:3,grooming:4,alone_tolerance:4,train_difficulty:4,budget:5},filters:{noise:4,hypoallergenic:false,good_with_kids:true,novice_friendly:false},personality:["沉稳","护卫","独立"],one_liner:"一座会呼吸的白色棉花山，白天岁月静好，半夜准时开嗓巡逻。",real_talk:"夜里爱叫、掉毛成片、固执到不爱听指令，巨型犬食量和医疗都是大开销。"},
-  {id:"chinese_rural_dog",name:"中华田园犬",name_en:"Chinese Rural Dog",size:"medium",traits:{exercise:3,grooming:2,alone_tolerance:4,train_difficulty:2,budget:2},filters:{noise:3,hypoallergenic:false,good_with_kids:true,novice_friendly:true},personality:["忠诚","皮实","机灵"],one_liner:"被低估的国民好狗，皮实好养、忠诚护家，从不挑食也从不矫情。",real_talk:"天性警觉护主，看到生人会叫，需要从小社会化；血统杂、性格个体差异大。"},
+ {
+  "id": "poodle",
+  "name": "泰迪/贵宾",
+  "name_en": "Poodle",
+  "size": "small",
+  "traits": {
+   "exercise": 4,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 1,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "聪明",
+   "黏人",
+   "爱玩"
+  ],
+  "one_liner": "狗界优等生，你说啥它懂啥，学新动作快得让你怀疑它偷看了说明书。",
+  "real_talk": "卷毛不掉但会一直长，不修剪就成流浪汉，美容店是你每月固定开销。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "奶萌",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "bichon",
+  "name": "比熊",
+  "name_en": "Bichon Frise",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "亲人",
+   "开朗",
+   "爱粘人"
+  ],
+  "one_liner": "行走的棉花糖，一天到晚乐呵呵，见谁都觉得你是来爱它的。",
+  "real_talk": "白毛娃容易泪痕和打结，不天天打理就脏脏丑丑，剃毛修剪也省不了。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "pomeranian",
+  "name": "博美",
+  "name_en": "Pomeranian",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": true
+  },
+  "personality": [
+   "机灵",
+   "爱叫",
+   "有主见"
+  ],
+  "one_liner": "两斤重的小狮子，胆子比身体大十倍，门口有响动它第一个冲上去汪汪汪。",
+  "real_talk": "双层毛掉得欢、换毛季满屋飞絮，而且是个话痨，楼薄邻居敏感的慎入。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "french_bulldog",
+  "name": "法斗",
+  "name_en": "French Bulldog",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 1,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "憨厚",
+   "黏人",
+   "安静"
+  ],
+  "one_liner": "沙发挂件本件，不爱叫不爱动，最大爱好是趴你腿上发出小猪呼噜。",
+  "real_talk": "短鼻子是病包，呼吸道、皮肤、关节都容易出问题，怕热不能剧烈运动，医药费是真烧钱。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "奶萌",
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "pug",
+  "name": "巴哥",
+  "name_en": "Pug",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "逗趣",
+   "随和",
+   "贪吃"
+  ],
+  "one_liner": "自带喜剧效果的小胖子，散步二十分钟就够，剩下时间负责卖萌和打呼噜。",
+  "real_talk": "短毛但掉成灾、被叫'掉毛怪'，脸褶要天天擦，短鼻同样怕热易生病、还特能吃容易胖。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "奶萌",
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "chihuahua",
+  "name": "吉娃娃",
+  "name_en": "Chihuahua",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 2,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 2
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": true
+  },
+  "personality": [
+   "警惕",
+   "护主",
+   "小炮仗"
+  ],
+  "one_liner": "体重一斤气场一吨，认准一个主人死忠护卫，谁靠太近它先警告三声。",
+  "real_talk": "爱叫又容易护食凶人，对陌生人和小孩不太友好，养它得接受它的小脾气。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "maltese",
+  "name": "马尔济斯",
+  "name_en": "Maltese",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "温柔",
+   "黏人",
+   "优雅"
+  ],
+  "one_liner": "披着白丝绸的小贵族，温柔又黏人，最喜欢窝你怀里当个安静的小美人。",
+  "real_talk": "一身白长毛是面子工程，不天天梳就打结、眼周泪痕擦不及，太黏人独处久了会焦虑。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "优雅",
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "corgi",
+  "name": "柯基",
+  "name_en": "Pembroke Welsh Corgi",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "活泼",
+   "聪明",
+   "固执"
+  ],
+  "one_liner": "腿短一截的牧羊犬，自以为是大狗，能跟你跑能跟你犟，屁股扭起来全场最佳。",
+  "real_talk": "双层毛一年掉两季、平时也天天掉，沙发地板全是毛；脾气倔，叫起来嗓门不小。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "花色"
+   ],
+   "look_style": [
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "miniature_schnauzer",
+  "name": "雪纳瑞",
+  "name_en": "Miniature Schnauzer",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 2,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "机灵",
+   "爱叫",
+   "黏人"
+  ],
+  "one_liner": "顶着老头眉毛和大胡子的小硬汉，聪明伶俐还不怎么掉毛，是出了名的省心搭子。",
+  "real_talk": "毛不掉但要花钱：每5-8周得修剪一次；而且是个话痨，门口有动静必报告。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "帅气",
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "dachshund",
+  "name": "腊肠",
+  "name_en": "Dachshund",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 2,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 5,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "勇猛",
+   "固执",
+   "护主"
+  ],
+  "one_liner": "一根会走路的小香肠，胆子比身子大十倍，认定的事九头牛都拉不回来。",
+  "real_talk": "嗓门巨大、特别爱叫，又倔又有主见不好训；身子长容易椎间盘出问题，得防着别让它乱跳。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "yorkshire_terrier",
+  "name": "约克夏",
+  "name_en": "Yorkshire Terrier",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": true,
+   "good_with_kids": false,
+   "novice_friendly": true
+  },
+  "personality": [
+   "黏人",
+   "倔强",
+   "爱叫"
+  ],
+  "one_liner": "巴掌大的迷你贵妇，一身丝绸长发能拖地，骨子里却是个天不怕地不怕的小梗犬。",
+  "real_talk": "毛少不咋掉，但留长发要天天打理、还得花钱修剪；很黏人、需求没满足就开嗓，体型太小不适合家有太小的娃。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅",
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "papillon",
+  "name": "蝴蝶犬",
+  "name_en": "Papillon",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 3,
+   "alone_tolerance": 3,
+   "train_difficulty": 2,
+   "budget": 2
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": true,
+   "good_with_kids": false,
+   "novice_friendly": true
+  },
+  "personality": [
+   "聪明",
+   "敏捷",
+   "亲人"
+  ],
+  "one_liner": "顶着两片蝴蝶大耳朵的小机灵鬼，是玩具犬里出了名的学霸，敏捷赛场上常拿冠军。",
+  "real_talk": "脑子太好用，闲着会自己找乐子；没有底毛不爆毛，但长饰毛每周得梳几次；体型娇小，磕碰得当心。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅",
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "beagle",
+  "name": "比格",
+  "name_en": "Beagle",
+  "size": "small",
+  "traits": {
+   "exercise": 4,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 4,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 5,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "欢乐",
+   "贪吃",
+   "鼻子至上"
+  ],
+  "one_liner": "永远开心、永远在闻地的快乐小猎犬，鼻子一带电整条狗就失联，跟谁都自来熟。",
+  "real_talk": "会嚎会吠嗓门感人、容易扰邻；鼻子一带头就不听召唤，固执难训；超能吃要防胖，独处久了会拆家。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "花色"
+   ],
+   "look_style": [
+    "奶萌",
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "cocker_spaniel",
+  "name": "可卡",
+  "name_en": "Cocker Spaniel",
+  "size": "medium",
+  "traits": {
+   "exercise": 3,
+   "grooming": 5,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "温柔",
+   "亲人",
+   "讨喜"
+  ],
+  "one_liner": "一双水汪汪大眼配上波浪长耳，性子温软又黏人，是公认的家庭暖心担当。",
+  "real_talk": "一身长毛是个无底洞：要常梳、定期修剪很费钱；大耳朵不透气特别容易耳道发炎，得勤清理勤看医生。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅",
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "golden_retriever",
+  "name": "金毛",
+  "name_en": "Golden Retriever",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 5,
+   "alone_tolerance": 2,
+   "train_difficulty": 1,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "温顺",
+   "聪明",
+   "亲人"
+  ],
+  "one_liner": "走在路上谁都想摸两把的人见人爱大暖男，把'快乐'写在脸上。",
+  "real_talk": "掉毛是真的猛，换毛季家里能再'养'出一条狗；而且精力旺，不遛它它能把你的拖鞋一只只叼走。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "憨厚",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "labrador_retriever",
+  "name": "拉布拉多",
+  "name_en": "Labrador Retriever",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 1,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "热情",
+   "好训",
+   "贪吃"
+  ],
+  "one_liner": "全世界最好训的狗之一，导盲犬天花板，唯一的人生目标是吃和讨好你。",
+  "real_talk": "精力是真旺，幼年期能拆家拆到你怀疑人生；而且嘴特别馋，不控食量分分钟胖成猪。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "siberian_husky",
+  "name": "哈士奇",
+  "name_en": "Siberian Husky",
+  "size": "medium",
+  "traits": {
+   "exercise": 5,
+   "grooming": 4,
+   "alone_tolerance": 1,
+   "train_difficulty": 5,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "固执",
+   "话痨",
+   "精力爆表"
+  ],
+  "one_liner": "外表是狼，内心是二哈，主打一个'你说东我偏往西'的快乐神经。",
+  "real_talk": "拆家届扛把子，独处就开拆；耐力工作犬运动量巨大，不遛够每天都在跟你斗智斗勇，新手慎入。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "samoyed",
+  "name": "萨摩耶",
+  "name_en": "Samoyed",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 5,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "微笑",
+   "黏人",
+   "爱叫"
+  ],
+  "one_liner": "一身雪白会微笑的天使脸，俗称'微笑天使'，治愈值拉满。",
+  "real_talk": "天使脸庞拆家手，那身白毛掉起来像下雪，伺候不好还爱叫，'天使'外号背后全是体力活。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "奶萌",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "alaskan_malamute",
+  "name": "阿拉斯加",
+  "name_en": "Alaskan Malamute",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 5,
+   "alone_tolerance": 3,
+   "train_difficulty": 5,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "憨厚",
+   "固执",
+   "大块头"
+  ],
+  "one_liner": "比哈士奇大一圈的雪橇巨汉，憨厚老实但一身蛮力，是会拉雪橇的毛绒坦克。",
+  "real_talk": "食量和开销都是大型犬顶配，换毛季掉毛堪比灾难现场；力气大又有主见，不爱叫但爱嚎，新手很难驾驭。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气",
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "shiba_inu",
+  "name": "柴犬",
+  "name_en": "Shiba Inu",
+  "size": "medium",
+  "traits": {
+   "exercise": 3,
+   "grooming": 3,
+   "alone_tolerance": 4,
+   "train_difficulty": 4,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "独立",
+   "倔强",
+   "干净"
+  ],
+  "one_liner": "猫系狗，爱你但不腻你，一言不合就上演柴犬尖叫现场。",
+  "real_talk": "换毛季掉毛掉到怀疑人生，而且它根本不觉得自己需要听你的。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "奶萌",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "border_collie",
+  "name": "边境牧羊犬",
+  "name_en": "Border Collie",
+  "size": "medium",
+  "traits": {
+   "exercise": 5,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "聪明",
+   "精力旺",
+   "工作狂"
+  ],
+  "one_liner": "狗界学霸，你不给它派活儿，它就自己给家具排活儿。",
+  "real_talk": "聪明是真聪明，但每天不遛够两小时加动脑，它能把家拆了还嫌你不够忙。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "german_shepherd",
+  "name": "德国牧羊犬",
+  "name_en": "German Shepherd",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "忠诚",
+   "护主",
+   "聪明"
+  ],
+  "one_liner": "全能优等生，对你死心塌地，对陌生人自带安检模式。",
+  "real_talk": "掉毛号称'德牧暴雪'，体型大食量大易有髋关节问题，养它得有体力也得有预算。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "doberman_pinscher",
+  "name": "杜宾犬",
+  "name_en": "Doberman Pinscher",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 2,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "机警",
+   "黏人",
+   "高智商"
+  ],
+  "one_liner": "看着像保镖，实则是要贴在你腿上的两百斤大宝宝。",
+  "real_talk": "短毛省打理，但精力旺、力气大、超黏人，独处久了容易焦虑，新手压不住它的强度。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "深色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "great_pyrenees",
+  "name": "大白熊犬",
+  "name_en": "Great Pyrenees",
+  "size": "large",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 4,
+   "train_difficulty": 4,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "沉稳",
+   "护卫",
+   "独立"
+  ],
+  "one_liner": "一座会呼吸的白色棉花山，白天岁月静好，半夜准时开嗓巡逻。",
+  "real_talk": "夜里爱叫、掉毛成片、固执到不爱听指令，巨型犬食量和医疗都是大开销。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "憨厚",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "chinese_rural_dog",
+  "name": "中华田园犬",
+  "name_en": "Chinese Rural Dog",
+  "size": "medium",
+  "traits": {
+   "exercise": 3,
+   "grooming": 2,
+   "alone_tolerance": 4,
+   "train_difficulty": 2,
+   "budget": 2
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "忠诚",
+   "皮实",
+   "机灵"
+  ],
+  "one_liner": "被低估的国民好狗，皮实好养、忠诚护家，从不挑食也从不矫情。",
+  "real_talk": "天性警觉护主，看到生人会叫，需要从小社会化；血统杂、性格个体差异大。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "shih_tzu",
+  "name": "西施犬",
+  "name_en": "Shih Tzu",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "黏人",
+   "温和",
+   "爱撒娇"
+  ],
+  "one_liner": "天生的沙发陪伴犬，最大爱好是趴在你腿上当个小暖炉。",
+  "real_talk": "那身飘逸长毛要么天天梳要么定期剃，懒人会被毛发逼疯，还是扁脸犬天热易喘。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "奶萌",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "lhasa_apso",
+  "name": "拉萨犬",
+  "name_en": "Lhasa Apso",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 4,
+   "alone_tolerance": 4,
+   "train_difficulty": 4,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": true,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "独立",
+   "警觉",
+   "有主见"
+  ],
+  "one_liner": "披着仙气长毛的小哨兵，对陌生人天生端着，对家人才放下身段。",
+  "real_talk": "聪明但固执、对小孩耐心有限，长毛同样费打理，新手容易被它的'臭脾气'拿捏。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "pekingese",
+  "name": "北京犬",
+  "name_en": "Pekingese",
+  "size": "small",
+  "traits": {
+   "exercise": 1,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "高傲",
+   "忠诚",
+   "固执"
+  ],
+  "one_liner": "一身狮鬃、走路一摇一摆的小皇帝，把'尊贵'两个字写在脸上。",
+  "real_talk": "极扁脸呼吸道脆弱、怕热易病推高开销，掉毛多又固执难训，对粗心小孩也不耐烦。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅",
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "west_highland_white_terrier",
+  "name": "西高地白梗",
+  "name_en": "West Highland White Terrier",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 3,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "活泼",
+   "自信",
+   "好奇"
+  ],
+  "one_liner": "永远一身雪白、自信满满的小白梗，精力充沛又爱凑热闹。",
+  "real_talk": "梗犬本性爱叫爱挖、有点小固执，硬质被毛要定期专业修剪才好看。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "奶萌",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "jack_russell_terrier",
+  "name": "杰克罗素梗",
+  "name_en": "Jack Russell Terrier",
+  "size": "small",
+  "traits": {
+   "exercise": 5,
+   "grooming": 2,
+   "alone_tolerance": 2,
+   "train_difficulty": 4,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "精力旺盛",
+   "聪明",
+   "倔强"
+  ],
+  "one_liner": "装在小身板里的发动机，一天不放电就拆家给你看的工作狂。",
+  "real_talk": "运动需求拉到顶（每天1-2小时高强度），聪明却固执、爱叫爱追猎，新手极易翻车。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气",
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "cavalier_king_charles_spaniel",
+  "name": "查理王猎犬",
+  "name_en": "Cavalier King Charles Spaniel",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 1,
+   "train_difficulty": 2,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "黏人",
+   "温柔",
+   "亲人"
+  ],
+  "one_liner": "把'好脾气'刻进基因的小贵族，对谁都笑脸相迎、走到哪跟到哪。",
+  "real_talk": "极度黏人、独处易崩溃，丝状长毛要常打理，且品种性心脏病高发，后期开销不低。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅",
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "miniature_pinscher",
+  "name": "迷你杜宾",
+  "name_en": "Miniature Pinscher",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 1,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 2
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "大胆",
+   "机警",
+   "倔强"
+  ],
+  "one_liner": "玩具组里的'小霸王'，昂首阔步像踩着弹簧，胆子比体型大十倍。",
+  "real_talk": "精力旺盛、固执爱叫又是天生看门犬，小身板怕磕碰、对粗心小孩不耐烦，新手不好驾驭。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "italian_greyhound",
+  "name": "意大利灵缇",
+  "name_en": "Italian Greyhound",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 1,
+   "alone_tolerance": 1,
+   "train_difficulty": 3,
+   "budget": 2
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": true
+  },
+  "personality": [
+   "黏人",
+   "敏感",
+   "温柔"
+  ],
+  "one_liner": "一只随时想钻进你被窝的细腿暖男，散完步就秒变沙发土豆。",
+  "real_talk": "极度黏人，独处容易焦虑，腿细骨头脆，玩闹时容易骨折，厕所还特别难教。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "boston_terrier",
+  "name": "波士顿梗",
+  "name_en": "Boston Terrier",
+  "size": "small",
+  "traits": {
+   "exercise": 2,
+   "grooming": 2,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 2
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "友好",
+   "聪明",
+   "爱玩"
+  ],
+  "one_liner": "穿着小燕尾服的城市绅士，几次短玩耍就满足，城里养特省心。",
+  "real_talk": "扁脸短鼻，天热和剧烈运动容易喘不上气，偶尔有打鼾和肠胃敏感。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "花色"
+   ],
+   "look_style": [
+    "奶萌",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "dalmatian",
+  "name": "斑点狗",
+  "name_en": "Dalmatian",
+  "size": "medium",
+  "traits": {
+   "exercise": 5,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "精力旺",
+   "活泼",
+   "忠诚"
+  ],
+  "one_liner": "自带斑点滤镜的跑步搭子，一天不放电就敢把你家拆成消防演习现场。",
+  "real_talk": "运动量极大，每天要一两小时高强度活动，否则拆家；毛短却掉得到处都是。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "花色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "shetland_sheepdog",
+  "name": "喜乐蒂",
+  "name_en": "Shetland Sheepdog",
+  "size": "medium",
+  "traits": {
+   "exercise": 4,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 1,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 5,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "聪明",
+   "黏主人",
+   "警觉"
+  ],
+  "one_liner": "缩小版牧羊犬学霸，一点就通，但门铃一响能给你播报半小时。",
+  "real_talk": "特别爱叫，扰民风险高；长双层毛常年掉，换季更夸张，得勤梳。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "花色",
+    "浅色"
+   ],
+   "look_style": [
+    "优雅",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "chow_chow",
+  "name": "松狮",
+  "name_en": "Chow Chow",
+  "size": "medium",
+  "traits": {
+   "exercise": 2,
+   "grooming": 5,
+   "alone_tolerance": 5,
+   "train_difficulty": 4,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "高冷",
+   "独立",
+   "忠诚"
+  ],
+  "one_liner": "顶着一身蓬毛的猫系狗，对你忠诚但全程爱搭不理，自己待着也无所谓。",
+  "real_talk": "固执难训、对陌生人冷淡，新手很难驾驭；厚毛换季掉成灾，扁脸怕热。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "akita",
+  "name": "秋田犬",
+  "name_en": "Akita",
+  "size": "large",
+  "traits": {
+   "exercise": 3,
+   "grooming": 5,
+   "alone_tolerance": 5,
+   "train_difficulty": 4,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "忠诚",
+   "独立",
+   "护主"
+  ],
+  "one_liner": "一根筋的忠犬天花板，认准你一个，但对外人和别的狗都板着脸。",
+  "real_talk": "大型固执、护主性强、对其他动物不友好，新手压不住；厚毛换季掉成暴雪。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "花色",
+    "深色"
+   ],
+   "look_style": [
+    "憨厚",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "bulldog",
+  "name": "英国斗牛犬",
+  "name_en": "Bulldog (English)",
+  "size": "medium",
+  "traits": {
+   "exercise": 1,
+   "grooming": 5,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "温和",
+   "固执",
+   "黏人"
+  ],
+  "one_liner": "走两步就喘的沙发土豆，长着一张永远在生闷气的脸，其实软得很。",
+  "real_talk": "怕热、爱打呼噜流口水，皮褶要天天擦，呼吸道和皮肤问题多，看病很烧钱。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "shar_pei",
+  "name": "沙皮犬",
+  "name_en": "Shar Pei",
+  "size": "medium",
+  "traits": {
+   "exercise": 2,
+   "grooming": 3,
+   "alone_tolerance": 4,
+   "train_difficulty": 4,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": false,
+   "novice_friendly": false
+  },
+  "personality": [
+   "忠诚",
+   "警惕",
+   "独立"
+  ],
+  "one_liner": "一身褶子的高冷护卫，只对自家人掏心，对陌生人全程黑脸。",
+  "real_talk": "性格固执又护主，对外人和别的狗都防备，皮褶易发炎、眼睛病多，不适合新手。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "憨厚",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "whippet",
+  "name": "惠比特",
+  "name_en": "Whippet",
+  "size": "medium",
+  "traits": {
+   "exercise": 4,
+   "grooming": 1,
+   "alone_tolerance": 3,
+   "train_difficulty": 2,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "温顺",
+   "安静",
+   "爆发力强"
+  ],
+  "one_liner": "家里是安静的小绅士，一到空地就秒变离弦的箭，跑起来比谁都野。",
+  "real_talk": "追逐本能极强，看到小动物会不顾一切冲出去，遛弯最好牵绳；瘦皮薄怕冷。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "japanese_spitz",
+  "name": "银狐犬",
+  "name_en": "Japanese Spitz",
+  "size": "small",
+  "traits": {
+   "exercise": 3,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 2
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "活泼",
+   "聪明",
+   "黏人"
+  ],
+  "one_liner": "一团会撒娇的白棉花，聪明又黏人，开心起来话特别多。",
+  "real_talk": "比较黏人不太能独处，一年换两次毛掉一地白毛，爱叫需要从小教。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "奶萌"
+   ]
+  }
+ },
+ {
+  "id": "basset_hound",
+  "name": "巴吉度",
+  "name_en": "Basset Hound",
+  "size": "medium",
+  "traits": {
+   "exercise": 2,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 5,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "温和",
+   "固执",
+   "爱嚎"
+  ],
+  "one_liner": "短腿大耳朵的忧郁老大爷，鼻子一启动就六亲不认，嗓门大得能传半条街。",
+  "real_talk": "嚎叫声极洪亮、闻到气味就不听话，口水多还掉毛，长耳朵易发炎、腰背和肥胖要盯着。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "australian_shepherd",
+  "name": "澳大利亚牧羊犬",
+  "name_en": "Australian Shepherd",
+  "size": "medium",
+  "traits": {
+   "exercise": 5,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "聪明",
+   "精力旺盛",
+   "忠诚"
+  ],
+  "one_liner": "智商高到能拆家的工作狂，一天没遛够就开始自己找活干，比如重新装修你家。",
+  "real_talk": "精力旺到离谱、必须每天大量运动加动脑，否则会焦虑拆家；聪明但太能折腾，不适合新手。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "english_springer_spaniel",
+  "name": "英国史宾格",
+  "name_en": "English Springer Spaniel",
+  "size": "medium",
+  "traits": {
+   "exercise": 5,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "热情",
+   "黏人",
+   "爱讨好"
+  ],
+  "one_liner": "永动机一样的活泼跟屁虫，你走到哪它的尾巴就摇到哪。",
+  "real_talk": "精力旺到爆，运动不够会拆家，也特别怕孤单不能长时间独处。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "soft_coated_wheaten_terrier",
+  "name": "软毛麦色梗",
+  "name_en": "Soft-Coated Wheaten Terrier",
+  "size": "medium",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "快乐",
+   "友善",
+   "有点固执"
+  ],
+  "one_liner": "一头柔顺麦色卷毛的开心果，社交又不黏人，但骨子里还是个小倔梗。",
+  "real_talk": "掉毛少不代表省心，单层丝毛容易打结，想保持卖相得近乎每天梳。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "奶萌",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "rough_collie",
+  "name": "苏格兰牧羊犬",
+  "name_en": "Rough Collie",
+  "size": "medium",
+  "traits": {
+   "exercise": 4,
+   "grooming": 5,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "聪明",
+   "温柔",
+   "敏感"
+  ],
+  "one_liner": "灵犬莱西本西，飘逸长毛配高贵气质，聪明到你说一遍就懂。",
+  "real_talk": "厚双层长毛掉起来像下雪，还爱叫，无聊或想引起注意时会一直吠。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "rottweiler",
+  "name": "罗威纳",
+  "name_en": "Rottweiler",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 3,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "忠诚",
+   "沉稳",
+   "护主"
+  ],
+  "one_liner": "外表冷面保镖、内心黏人大宝贝，对自家人温柔得不像话。",
+  "real_talk": "聪明好训但力气巨大又有主见，新手镇不住，必须从小立规矩。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "深色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "old_english_sheepdog",
+  "name": "古牧",
+  "name_en": "Old English Sheepdog",
+  "size": "large",
+  "traits": {
+   "exercise": 3,
+   "grooming": 5,
+   "alone_tolerance": 2,
+   "train_difficulty": 4,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "憨厚",
+   "温和",
+   "黏人"
+  ],
+  "one_liner": "一团会走路的毛球，遮着眼睛憨态可掬，特别喜欢黏着全家人。",
+  "real_talk": "那身毛是掉毛+打理双重灾难，每周三四小时起步，体型又大不适合新手。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "saint_bernard",
+  "name": "圣伯纳",
+  "name_en": "St. Bernard",
+  "size": "large",
+  "traits": {
+   "exercise": 2,
+   "grooming": 5,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "温柔",
+   "沉稳",
+   "护幼"
+  ],
+  "one_liner": "雪山救援队出身的温柔巨人，慢吞吞又爱犯懒，是个口水版大暖男。",
+  "real_talk": "口水甩得满墙都是，巨型身板食量和医药费都惊人，新手很难驾驭。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "浅色",
+    "花色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "great_dane",
+  "name": "大丹犬",
+  "name_en": "Great Dane",
+  "size": "large",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 3,
+   "train_difficulty": 3,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "温柔",
+   "亲人",
+   "沉稳"
+  ],
+  "one_liner": "以为自己是膝盖犬的巨人，能把整个屁股坐你腿上。",
+  "real_talk": "口水会甩到天花板，而且寿命偏短，养它要做好心理准备。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色",
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "憨厚",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "newfoundland",
+  "name": "纽芬兰犬",
+  "name_en": "Newfoundland",
+  "size": "large",
+  "traits": {
+   "exercise": 3,
+   "grooming": 5,
+   "alone_tolerance": 3,
+   "train_difficulty": 2,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "温顺",
+   "耐心",
+   "忠诚"
+  ],
+  "one_liner": "天生的带娃保姆，还自带救生员体质，看见水就想跳。",
+  "real_talk": "口水加掉毛双重暴击，厚毛要天天打理，怕热。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "bernese",
+  "name": "伯恩山犬",
+  "name_en": "Bernese Mountain Dog",
+  "size": "large",
+  "traits": {
+   "exercise": 3,
+   "grooming": 4,
+   "alone_tolerance": 2,
+   "train_difficulty": 2,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "温顺",
+   "忠诚",
+   "沉稳"
+  ],
+  "one_liner": "永远黏着主人的三色大暖男，眼神写满'别离开我'。",
+  "real_talk": "掉毛常年不停，且这个品种普遍寿命短、易得癌，是个会让人心碎的选择。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "花色"
+   ],
+   "look_style": [
+    "憨厚",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "cane_corso",
+  "name": "卡斯罗",
+  "name_en": "Cane Corso",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 3,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "护主",
+   "自信",
+   "聪明"
+  ],
+  "one_liner": "气场两米八的护卫犬，对自家人是软的，对陌生人是钢铁。",
+  "real_talk": "力量大又有主见，新手压不住，必须从小坚定社会化和服从训练。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "深色",
+    "花色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "vizsla",
+  "name": "维兹拉",
+  "name_en": "Vizsla",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 1,
+   "alone_tolerance": 1,
+   "train_difficulty": 2,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "亲人",
+   "活泼",
+   "聪明"
+  ],
+  "one_liner": "传说中的'魔术贴狗'，你上厕所它都要跟，金红色一身腱子肉。",
+  "real_talk": "运动量巨大且极度黏人，独处会焦虑拆家，不适合上班族。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "帅气",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "weimaraner",
+  "name": "魏玛犬",
+  "name_en": "Weimaraner",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 1,
+   "alone_tolerance": 1,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "亲人",
+   "机警",
+   "精力旺"
+  ],
+  "one_liner": "一身银灰像贵族雕塑，跑起来像离弦的箭，外号'银色幽灵'。",
+  "real_talk": "精力炸裂加严重分离焦虑，独处就拆家狂吠，新手和上班族慎入。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "帅气",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "belgian_malinois",
+  "name": "比利时玛利诺",
+  "name_en": "Belgian Malinois",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 2,
+   "alone_tolerance": 2,
+   "train_difficulty": 5,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "高能",
+   "忠诚",
+   "工作狂"
+  ],
+  "one_liner": "停不下来的运动健将，你坐五分钟它就来催你出门。",
+  "real_talk": "能量大到普通人扛不住，关家里没事干能把房子拆了。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "深色",
+    "浅色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "afghan_hound",
+  "name": "阿富汗猎犬",
+  "name_en": "Afghan Hound",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 5,
+   "alone_tolerance": 4,
+   "train_difficulty": 5,
+   "budget": 5
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "高冷",
+   "独立",
+   "敏感"
+  ],
+  "one_liner": "走路自带飘逸长发的高冷贵族，对你爱搭不理但其实很黏自己人。",
+  "real_talk": "那身丝毛美容是个无底洞，又贵又费时，还特别有主见不爱听话。",
+  "appearance": {
+   "coat_length": "long",
+   "coat_colors": [
+    "浅色",
+    "深色"
+   ],
+   "look_style": [
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "irish_setter",
+  "name": "爱尔兰雪达",
+  "name_en": "Irish Setter",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "热情",
+   "贪玩",
+   "亲人"
+  ],
+  "one_liner": "一身红毛永远长不大的阳光大男孩，热情到把客人也当自家人。",
+  "real_talk": "精力旺盛又黏人，运动量给不够会变成拆家小能手。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "深色"
+   ],
+   "look_style": [
+    "优雅",
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "boxer",
+  "name": "拳师犬",
+  "name_en": "Boxer",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 2,
+   "alone_tolerance": 2,
+   "train_difficulty": 3,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 3,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": true
+  },
+  "personality": [
+   "活泼",
+   "护主",
+   "长不大"
+  ],
+  "one_liner": "永远长不大的活宝，会对你做鬼脸，开心起来全身扭成麻花。",
+  "real_talk": "短鼻子怕热爱流口水，还容易遇上心脏和肿瘤问题，看病开销不低。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "花色",
+    "深色"
+   ],
+   "look_style": [
+    "帅气",
+    "憨厚"
+   ]
+  }
+ },
+ {
+  "id": "dogo_argentino",
+  "name": "杜高",
+  "name_en": "Dogo Argentino",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 2,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "勇猛",
+   "忠诚",
+   "强壮"
+  ],
+  "one_liner": "一身纯白肌肉的猎手，对家人温柔得像棉花，对外人气场全开。",
+  "real_talk": "力气大、护卫本能强，新手压不住，很多地区还有饲养限制。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ },
+ {
+  "id": "rhodesian_ridgeback",
+  "name": "罗德西亚脊背犬",
+  "name_en": "Rhodesian Ridgeback",
+  "size": "large",
+  "traits": {
+   "exercise": 4,
+   "grooming": 1,
+   "alone_tolerance": 3,
+   "train_difficulty": 4,
+   "budget": 3
+  },
+  "filters": {
+   "noise": 2,
+   "hypoallergenic": false,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "独立",
+   "沉稳",
+   "有主见"
+  ],
+  "one_liner": "背上一道反向毛脊的安静猎狮犬，平时很佛系，关键时刻才出手。",
+  "real_talk": "聪明但固执有自己的想法，力气大，没经验的主人容易被它牵着走。",
+  "appearance": {
+   "coat_length": "short",
+   "coat_colors": [
+    "浅色"
+   ],
+   "look_style": [
+    "帅气",
+    "优雅"
+   ]
+  }
+ },
+ {
+  "id": "giant_schnauzer",
+  "name": "巨型雪纳瑞",
+  "name_en": "Giant Schnauzer",
+  "size": "large",
+  "traits": {
+   "exercise": 5,
+   "grooming": 3,
+   "alone_tolerance": 2,
+   "train_difficulty": 4,
+   "budget": 4
+  },
+  "filters": {
+   "noise": 4,
+   "hypoallergenic": true,
+   "good_with_kids": true,
+   "novice_friendly": false
+  },
+  "personality": [
+   "聪明",
+   "护卫",
+   "精力旺"
+  ],
+  "one_liner": "顶着大胡子的黑衣保镖，聪明得让你怀疑它听得懂人话。",
+  "real_talk": "少掉毛但要定期修剪，能量和护卫欲都猛，新手很难驾驭。",
+  "appearance": {
+   "coat_length": "medium",
+   "coat_colors": [
+    "深色"
+   ],
+   "look_style": [
+    "帅气"
+   ]
+  }
+ }
 ];
 const photoOf = id => `../../data/mock/dogs/${id}.jpg`;
 const SIZE_CN = {small:"小型",medium:"中型",large:"大型"};
@@ -216,12 +2820,12 @@ const WEIGHTS={exercise:1.5,noise:1.4,alone:1.3,grooming:1.0,train:1.0,budget:1.
 const MAX_PENALTY=Object.values(WEIGHTS).reduce((s,w)=>s+4*w,0);
 const DIM_LABEL={exercise:"运动量",noise:"安静程度",alone:"独处",grooming:"打理/掉毛",train:"好不好带",budget:"花销"};
 function collectAnswers(picks){
-  const a={exercise:3,alone_req:3,grooming:3,train:3,budget:3,max_size:"large",max_noise:5,require:{},pref:null};
+  const a={exercise:3,alone_req:3,grooming:3,train:3,budget:3,max_size:"large",max_noise:5,require:{},prefs:[]};
   QUESTIONS.forEach(q=>{const o=q.options[picks[q.id]]; if(!o)return;
     if(o.scores)Object.assign(a,o.scores);
     if(o.filters){if(o.filters.max_size)a.max_size=o.filters.max_size; if(o.filters.max_noise!=null)a.max_noise=o.filters.max_noise;
       if(o.filters.require_good_with_kids)a.require.kids=true; if(o.filters.require_hypoallergenic)a.require.hypo=true;}
-    if(o.pref)a.pref=o.pref;});
+    if(o.pref)a.prefs.push(o.pref);});
   return a;}
 function hardFilter(dogs,a){return dogs.filter(d=>{
   if(SIZE_RANK[d.size]>SIZE_RANK[a.max_size])return false;
@@ -234,9 +2838,17 @@ function scoreDog(d,a){
   let penalty=0; const detail=[];
   dims.forEach(dm=>{const gap=dm.demand-dm.supply; const w=WEIGHTS[dm.key];
     penalty+= gap>0?gap*w:Math.abs(gap)*w*0.2; detail.push({key:dm.key,gap});});
-  let score=100*(1-penalty/MAX_PENALTY);
-  if(a.pref){if(a.pref.size&&d.size===a.pref.size)score+=3; if(a.pref.personality&&d.personality.includes(a.pref.personality))score+=3;}
-  return{score:Math.max(0,Math.min(100,Math.round(score))),detail};}
+  const practical=100*(1-penalty/MAX_PENALTY);
+  // 外观偏好：只加分、用来排序（不影响合不合适）。bonus 不封顶，保证满分群里也能按喜好排序
+  let bonus=0;
+  (a.prefs||[]).forEach(p=>{
+    if(!p)return; const ap=d.appearance||{};
+    if(p.type==="size"      && d.size===p.value) bonus+=5;
+    else if(p.type==="coat_length" && ap.coat_length===p.value) bonus+=3;
+    else if(p.type==="coat_color"  && (ap.coat_colors||[]).includes(p.value)) bonus+=3;
+    else if(p.type==="look_style"  && (ap.look_style||[]).includes(p.value)) bonus+=4;
+  });
+  return{score:Math.max(0,Math.min(100,Math.round(practical+bonus))), rank:practical+bonus, detail};}
 function explain(d,detail){
   const good=detail.filter(x=>x.gap<=0).sort((a,b)=>a.gap-b.gap).slice(0,2).map(g=>`你给得起「${DIM_LABEL[g.key]}」`);
   const worst=detail.slice().sort((a,b)=>b.gap-a.gap)[0];
@@ -252,7 +2864,7 @@ function personalityTag(a){
 function match(picks){
   const a=collectAnswers(picks); let pool=hardFilter(DOGS,a); let relaxed=false;
   if(pool.length===0){relaxed=true; pool=hardFilter(DOGS,{...a,max_size:"large"}); if(pool.length===0)pool=DOGS.slice();}
-  const ranked=pool.map(d=>{const s=scoreDog(d,a); return{dog:d,score:s.score,why:explain(d,s.detail)};}).sort((x,y)=>y.score-x.score);
+  const ranked=pool.map(d=>{const s=scoreDog(d,a); return{dog:d,score:s.score,rank:s.rank,why:explain(d,s.detail)};}).sort((x,y)=>y.rank-x.rank);
   return{top:ranked.slice(0,3),tag:personalityTag(a),relaxed};}
 
 /* ============ 详情数据展示 ============ */

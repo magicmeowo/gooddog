@@ -1,11 +1,11 @@
 {
-  "_comment": "9 道题。type=hard 触发门槛过滤，type=soft 给负担维度打分，type=pref 喜好排序。scores 里的键对应 rubric 的维度。filters 里是硬约束。文案以好玩、像聊性格为准，背后偷偷测维度。",
+  "_comment": "12 道题。前 8 道是实用题(soft 给负担维度打分 / hard 触发门槛过滤)，后 4 道是外观偏好题(pref，只影响排序、不影响合不合适)。pref 结构: {type, value}，都行/没偏好为 null。scores 键对应 rubric 维度，appearance pref 对应 dogs.json 的 appearance 字段。",
   "questions": [
     {
       "id": "q_morning",
       "type": "soft",
       "text": "想象一个完美的周末早晨，你更想——",
-      "subtitle": "没有标准答案，凭直觉选",
+      "subtitle": "凭直觉选，没有标准答案",
       "options": [
         { "label": "😴 窝在床上睡到自然醒，谁也别叫我", "scores": { "exercise": 1 } },
         { "label": "☕️ 慢悠悠起床，楼下遛个弯买杯咖啡", "scores": { "exercise": 3 } },
@@ -27,7 +27,7 @@
       "id": "q_neighbor",
       "type": "hard",
       "text": "如果半夜有点动静，你的居住环境——",
-      "subtitle": "悄悄在问：你怕不怕狗叫扰邻",
+      "subtitle": "悄悄在问：怕不怕狗叫扰邻",
       "options": [
         { "label": "🤫 合租 / 墙薄 / 邻居敏感，必须安静", "filters": { "max_noise": 2 } },
         { "label": "🙂 还好，偶尔叫两声没人管", "filters": { "max_noise": 3 } },
@@ -52,16 +52,16 @@
       "text": "工作日里，狗大概要独自在家——",
       "subtitle": "测它能不能忍受独处",
       "options": [
-        { "label": "🌙 我经常加班 / 出差，它得自己待大半天", "scores": { "alone_tolerance": 5 } },
-        { "label": "🏃 朝九晚六，白天没人但晚上都在", "scores": { "alone_tolerance": 3 } },
-        { "label": "🏡 我居家办公 / 时间自由，基本全天有人", "scores": { "alone_tolerance": 1 } }
+        { "label": "🌙 我经常加班 / 出差，它得自己待大半天", "scores": { "alone_req": 5 } },
+        { "label": "🏃 朝九晚六，白天没人但晚上都在", "scores": { "alone_req": 3 } },
+        { "label": "🏡 我居家办公 / 时间自由，基本全天有人", "scores": { "alone_req": 1 } }
       ]
     },
     {
       "id": "q_mess",
       "type": "soft",
       "text": "沙发上落了一层狗毛、地上一个泥脚印，你的反应是——",
-      "subtitle": "测你对掉毛和打理的忍受度",
+      "subtitle": "测对掉毛和打理的忍受度",
       "options": [
         { "label": "😩 受不了，我希望家里一直干干净净", "scores": { "grooming": 1 } },
         { "label": "😅 打扫一下就好，能接受适度乱", "scores": { "grooming": 3 } },
@@ -72,11 +72,11 @@
       "id": "q_experience",
       "type": "soft",
       "text": "面对一只调皮、不太听话、还有点犟的狗，你——",
-      "subtitle": "测你的经验和耐心，决定能不能驾驭",
+      "subtitle": "测经验和耐心，决定能不能驾驭",
       "options": [
-        { "label": "🆘 完全没养过，希望它天生乖、好带", "scores": { "train_difficulty": 1 } },
-        { "label": "🙂 没太多经验，但愿意学、愿意花时间", "scores": { "train_difficulty": 3 } },
-        { "label": "💪 我养过狗 / 很有耐心，再犟也能搞定", "scores": { "train_difficulty": 5 } }
+        { "label": "🆘 完全没养过，希望它天生乖、好带", "scores": { "train": 1 } },
+        { "label": "🙂 没太多经验，但愿意学、愿意花时间", "scores": { "train": 3 } },
+        { "label": "💪 我养过狗 / 很有耐心，再犟也能搞定", "scores": { "train": 5 } }
       ]
     },
     {
@@ -91,15 +91,51 @@
       ]
     },
     {
-      "id": "q_vibe",
+      "id": "q_size",
       "type": "pref",
-      "text": "最后一题凭感觉——你理想中的狗狗是？",
-      "subtitle": "这题只影响给你排序，不影响合不合适",
+      "text": "接下来聊聊长相——你更想要多大的狗？",
+      "subtitle": "以下只影响排序，不影响合不合适",
       "options": [
-        { "label": "🧸 小小一只、软萌可爱，能抱在怀里", "pref": { "size": "small", "personality": "黏人" } },
-        { "label": "🐺 帅气有型、有点酷，遛出去有面子", "pref": { "size": "large", "personality": "独立" } },
-        { "label": "🥰 温柔粘人的大暖男 / 暖女", "pref": { "size": "large", "personality": "温顺" } },
-        { "label": "🤹 古灵精怪、活泼爱玩的开心果", "pref": { "personality": "活泼" } }
+        { "label": "🧸 小小一只，能抱在怀里", "pref": { "type": "size", "value": "small" } },
+        { "label": "🐕 中等个头，刚刚好", "pref": { "type": "size", "value": "medium" } },
+        { "label": "🐺 有存在感的大块头", "pref": { "type": "size", "value": "large" } },
+        { "label": "🤷 都行，不在意体型", "pref": null }
+      ]
+    },
+    {
+      "id": "q_coat",
+      "type": "pref",
+      "text": "毛发上你更偏爱——",
+      "subtitle": "长毛好看但费打理，短毛利落省心",
+      "options": [
+        { "label": "🌾 长毛飘逸，有造型感", "pref": { "type": "coat_length", "value": "long" } },
+        { "label": "✨ 短毛利落，好打理", "pref": { "type": "coat_length", "value": "short" } },
+        { "label": "🤷 没偏好", "pref": null }
+      ]
+    },
+    {
+      "id": "q_color",
+      "type": "pref",
+      "text": "毛色上你偏爱哪种？",
+      "subtitle": "凭眼缘选",
+      "options": [
+        { "label": "🤍 浅色系（白 / 奶油 / 金黄）", "pref": { "type": "coat_color", "value": "浅色" } },
+        { "label": "🖤 深色系（黑 / 棕 / 灰）", "pref": { "type": "coat_color", "value": "深色" } },
+        { "label": "🐾 花色斑纹（双色 / 斑点 / 虎斑）", "pref": { "type": "coat_color", "value": "花色" } },
+        { "label": "🤷 没偏好", "pref": null }
+      ]
+    },
+    {
+      "id": "q_look",
+      "type": "pref",
+      "text": "最后——哪种长相更让你心动？",
+      "subtitle": "颜值这关也得过",
+      "options": [
+        { "label": "🥰 奶萌可爱", "pref": { "type": "look_style", "value": "奶萌" } },
+        { "label": "😎 帅气威风", "pref": { "type": "look_style", "value": "帅气" } },
+        { "label": "🧸 憨厚老实", "pref": { "type": "look_style", "value": "憨厚" } },
+        { "label": "👑 优雅高贵", "pref": { "type": "look_style", "value": "优雅" } },
+        { "label": "🤷 没偏好", "pref": null }
       ]
     }
   ]
