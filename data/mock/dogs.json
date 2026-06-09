@@ -4,7 +4,8 @@
     "version": "v1",
     "source": "AKC breed traits + Dogtime + 中文养犬资料",
     "status": "待校准（尤其 budget 和 alone_tolerance）",
-    "rubric": "docs/decisions/breed-scoring-rubric.md"
+    "rubric": "docs/decisions/breed-scoring-rubric.md",
+    "photos": "每个品种一张照片，按 id 命名存于 data/mock/dogs/<id>.jpg。来源：维基百科/维基共享犬种词条首图（部分 dog.ceo）。⚠️ 上线前需逐张核实版权/授权（CC 协议署名要求），商用前替换为有明确授权的图。"
   },
   "dogs": [
     {
