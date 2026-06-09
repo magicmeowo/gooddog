@@ -86,8 +86,8 @@ body{font-family:var(--f-body); color:var(--ink); background:var(--paper-deep);
 .dogcard{background:var(--card); border:1.5px solid var(--line); border-radius:18px; overflow:hidden; margin-bottom:14px; cursor:pointer; transition:transform .18s var(--ease),box-shadow .18s var(--ease)}
 .dogcard:hover{transform:translateY(-2px); box-shadow:0 12px 28px rgba(43,38,34,.1)}
 .dogcard.best{border-color:var(--clay); border-width:2px}
-.dogcard .photo{position:relative; height:172px; background:var(--paper-deep)}
-.dogcard .photo img{width:100%; height:100%; object-fit:cover; display:block}
+.dogcard .photo{position:relative; aspect-ratio:4/3; background:var(--paper-deep); display:flex; align-items:center; justify-content:center; overflow:hidden}
+.dogcard .photo img{width:100%; height:100%; object-fit:contain; display:block}
 .dogcard .badge{position:absolute; top:12px; left:12px; background:var(--clay); color:#FCF7EE; font-size:11px; font-weight:500; padding:4px 11px; border-radius:99px; letter-spacing:.03em}
 .dogcard .score{position:absolute; top:12px; right:12px; background:rgba(43,38,34,.82); color:#F6F0E4; font-family:var(--f-display); font-size:13px; padding:4px 11px; border-radius:99px; backdrop-filter:blur(4px)}
 .dogcard .body{padding:15px 17px 17px}
@@ -108,12 +108,11 @@ body{font-family:var(--f-body); color:var(--ink); background:var(--paper-deep);
 .dbg pre{background:var(--paper-deep); padding:11px; border-radius:9px; overflow-x:auto; margin-top:8px; line-height:1.7}
 
 /* ===== detail (标本档案) ===== */
-.plate-photo{position:relative; margin:0 -26px 0; height:300px; background:var(--paper-deep)}
-.plate-photo img{width:100%; height:100%; object-fit:cover; display:block}
-.plate-cap{position:absolute; bottom:0; left:0; right:0; padding:30px 26px 12px;
-  background:linear-gradient(to top, rgba(43,38,34,.62), transparent); color:#F6F0E4;
-  display:flex; align-items:flex-end; justify-content:space-between}
-.plate-cap .pn{font-family:var(--f-display); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; opacity:.85}
+.plate-photo{position:relative; margin:0 -26px 0; aspect-ratio:4/3; background:var(--paper-deep);
+  display:flex; align-items:center; justify-content:center; overflow:hidden; border-bottom:1px solid var(--line)}
+.plate-photo img{width:100%; height:100%; object-fit:contain; display:block}
+.plate-cap{margin-top:12px; display:flex; align-items:center; justify-content:space-between}
+.plate-cap .pn{font-family:var(--f-display); font-style:italic; font-size:12px; letter-spacing:.06em; color:var(--clay)}
 .detail-name{margin-top:18px}
 .detail-name h2{font-family:var(--f-head); font-weight:900; font-size:30px; line-height:1.1}
 .detail-name .en{font-family:var(--f-display); font-style:italic; font-size:14px; color:var(--ink-faint); margin-top:3px}
@@ -142,7 +141,7 @@ body{font-family:var(--f-body); color:var(--ink); background:var(--paper-deep);
 /* footer actions */
 .actions{margin-top:auto; padding-top:24px}
 .trust{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px; font-size:11.5px; color:var(--ink-faint); letter-spacing:.03em}
-.trust .seal{width:14px;height:14px}
+.trust svg{width:14px;height:14px;flex-shrink:0}
 .dotsep{width:3px;height:3px;border-radius:50%;background:var(--ink-faint)}
 
 /* anim */
@@ -385,8 +384,8 @@ function renderDetail(){
   <button class="detail-back" onclick="closeDog()">${ICON.back} 返回</button>
   <div class="plate-photo fade">
     <img src="${photoOf(d.id)}" alt="${d.name}">
-    <div class="plate-cap"><span class="pn">Plate No.${String(idx).padStart(2,'0')} · 犬种图鉴</span></div>
   </div>
+  <div class="plate-cap"><span class="pn">Plate No.${String(idx).padStart(2,'0')} · 犬种图鉴</span></div>
   <div class="detail-name">
     <h2>${d.name}</h2>
     <div class="en">${d.name_en}</div>
