@@ -76,10 +76,21 @@ body{font-family:var(--f-body); color:var(--ink); background:var(--paper-deep);
 .qback{margin-top:22px; background:none; border:none; color:var(--ink-faint); font-size:14px; font-family:var(--f-body); cursor:pointer}
 
 /* ===== result ===== */
-.stamp{border:1.5px solid var(--clay); border-radius:18px; padding:22px 18px; text-align:center; position:relative; margin-bottom:22px; background:var(--clay-tint)}
+.stamp{border:1.5px solid var(--clay); border-radius:18px; padding:20px 18px; text-align:center; position:relative; margin-bottom:22px; background:var(--clay-tint)}
 .stamp .lbl{font-family:var(--f-display); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--clay-deep)}
-.stamp .tag{font-family:var(--f-head); font-weight:900; font-size:27px; color:var(--clay-deep); margin:6px 0 5px}
-.stamp .ln{font-size:13.5px; color:var(--ink-soft); line-height:1.6}
+.stamp .code{font-family:var(--f-display); font-weight:600; font-size:15px; letter-spacing:.32em; color:var(--clay); margin:9px 0 2px; padding-left:.32em}
+.stamp .tag{font-family:var(--f-head); font-weight:900; font-size:28px; color:var(--clay-deep); margin:2px 0 3px}
+.stamp .en-sub{font-family:var(--f-display); font-style:italic; font-size:13px; color:var(--clay); margin-bottom:8px}
+.stamp .ln{font-size:13.5px; color:var(--ink-soft); line-height:1.65; max-width:30ch; margin:0 auto}
+.stamp .match-line{margin-top:13px; padding-top:12px; border-top:1px solid var(--clay); border-color:rgba(177,74,38,.25); font-size:13px; color:var(--ink-soft)}
+.stamp .match-line b{color:var(--clay-deep); font-weight:700}
+/* 计算中 */
+.loading{min-height:78vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center}
+.loading-art{width:72px; height:72px; margin-bottom:24px}
+.loading-art svg{width:100%; height:100%}
+.loading-art .spin{transform-origin:center; animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-line{font-family:var(--f-head); font-size:16px; color:var(--ink-soft); transition:opacity .18s ease; min-height:1.4em}
 .sec-label{font-family:var(--f-display); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:10px; margin:24px 2px 12px}
 .sec-label::after{content:""; flex:1; height:1px; background:var(--line)}
 
@@ -3117,13 +3128,24 @@ function explain(d,detail){
   const worst=detail.slice().sort((a,b)=>b.gap-a.gap)[0];
   const warn=(worst&&worst.gap>0)?`要注意「${DIM_LABEL[worst.key]}」可能吃力`:null;
   return{good,warn};}
+// 养宠人格：三轴代号  活力(户/宅) × 陪伴(黏/独) × 讲究(精/简) = 8 种
+const PET_TYPES={
+  "户黏精":{name:"户外贵族型", en:"The Lavish Adventurer", line:"精力旺、时间多、还舍得花——狗跟着你，既能撒欢又能享福。"},
+  "户黏简":{name:"阳光搭子型", en:"The Sunny Companion", line:"爱出门、在家也多，只想要个好养、能一起跑跳的运动伙伴。"},
+  "户独精":{name:"精致独行型", en:"The Polished Maverick", line:"爱跑爱玩却常不在家，适合一只独立又得体的讲究狗。"},
+  "户独简":{name:"风风火火型", en:"The Free Spirit", line:"来去匆匆、不爱伺候，要的是一只皮实又跟得上你的运动健将。"},
+  "宅黏精":{name:"居家宠溺型", en:"The Doting Homebody", line:"宅、时间多、还舍得宠，专养黏人的小公主小少爷。"},
+  "宅黏简":{name:"暖被窝型", en:"The Cozy Cuddler", line:"只想在家窝着，身边有只省心的小棉袄就够了。"},
+  "宅独精":{name:"精致独居型", en:"The Solo Aesthete", line:"宅但常忙，要一只能照顾好自己、又好看得体的狗。"},
+  "宅独简":{name:"省心室友型", en:"The Easy Roommate", line:"宅、忙、还怕麻烦，要的是一只自己能过好的省心室友。"},
+};
 function personalityTag(a){
-  if(a.exercise>=4)return{tag:"出门撒野型",line:"你精力旺盛，适合能陪你一起跑跳的狗。"};
-  if(a.exercise<=2&&a.alone_req<=2)return{tag:"居家暖被窝型",line:"你时间多、爱宅，最适合黏人的小棉袄。"};
-  if(a.grooming<=2)return{tag:"精致洁癖型",line:"你受不了乱，得挑省心好打理的狗。"};
-  if(a.budget>=4)return{tag:"富养宠妈宠爸型",line:"你舍得花，狗跟着你享福。"};
-  if(a.train<=2)return{tag:"新手保命型",line:"你是新手，越省心好带的狗越合适。"};
-  return{tag:"随性养狗型",line:"你比较随和，大部分狗都能处得来。"};}
+  const act = a.exercise>=4 ? "户" : "宅";
+  const comp = a.alone_req>=4 ? "独" : "黏";
+  const fuss = (a.budget + a.grooming) >= 7 ? "精" : "简";
+  const code = act+comp+fuss;
+  return {code, ...PET_TYPES[code]};
+}
 function match(picks){
   const a=collectAnswers(picks); let pool=hardFilter(DOGS,a); let relaxed=false;
   if(pool.length===0){relaxed=true; pool=hardFilter(DOGS,{...a,max_size:"large"}); if(pool.length===0)pool=DOGS.slice();}
@@ -3144,6 +3166,7 @@ function noiseChip(n){return n<=2?"安静":n===3?"偶尔叫":"爱叫"}
 const app=document.getElementById("app");
 let picks={}, step=-1; // -1 landing, 0..n-1 quiz, n result
 let viewDogId=null;     // null=正常流程；有值=看详情
+let computed=false;     // 答完后先放"翻档案"动画，再出结果
 
 const ICON={
   arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
@@ -3158,20 +3181,41 @@ function render(){
   if(viewDogId)return renderDetail();
   if(step===-1)return renderLanding();
   if(step>=0&&step<QUESTIONS.length)return renderQuestion();
+  if(!computed)return renderLoading();
   return renderResult();
+}
+
+const LOAD_LINES=["正在翻阅 70 份犬种档案…","对照你的 12 个答案…","排除养不了的，留下合得来的…","马上揭晓和你最配的狗"];
+function renderLoading(){
+  app.innerHTML=`
+  <div class="loading">
+    <div class="loading-art">
+      <svg viewBox="0 0 64 64" fill="none">
+        <circle class="spin" cx="32" cy="32" r="24" stroke="var(--line)" stroke-width="3"/>
+        <circle class="spin" cx="32" cy="32" r="24" stroke="var(--clay)" stroke-width="3" stroke-linecap="round" stroke-dasharray="40 120"/>
+        <path d="M24 30c-3-6-2-9 3-6M40 30c3-6 2-9-3-6M22 34a10 9 0 0 0 20 0M28 33h.01M36 33h.01" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="loading-line" id="loadline">${LOAD_LINES[0]}</div>
+  </div>`;
+  let i=0;
+  const el=()=>document.getElementById("loadline");
+  const timer=setInterval(()=>{ i++; if(i<LOAD_LINES.length&&el()){el().style.opacity=0;
+    setTimeout(()=>{if(el()){el().textContent=LOAD_LINES[i];el().style.opacity=1;}},180);} },520);
+  setTimeout(()=>{ clearInterval(timer); computed=true; render(); }, 2100);
 }
 
 function renderLanding(){
   app.innerHTML=`
   <header class="masthead reveal d1">
     <div class="wordmark">GoodDog<span class="dot"></span></div>
-    <div class="issue">犬种适配指南<br>No.01 · 25 个品种</div>
+    <div class="issue">犬种适配指南<br>No.01 · 70 个品种</div>
   </header>
   <div class="kicker reveal d2" style="margin-top:24px">A field guide to your perfect dog</div>
   <h1 class="reveal d2" style="font-family:var(--f-head);font-weight:900;font-size:42px;line-height:1.2;margin-top:8px">
     帮你找到<br><span class="em">刚好适合你的狗<svg viewBox="0 0 320 10" preserveAspectRatio="none"><path d="M2,7 C64,2 128,2 190,5 C238,7 280,5 318,3" stroke="#B14A26" stroke-width="3" fill="none" stroke-linecap="round"/></svg></span>
   </h1>
-  <p class="lede reveal d3">9 道小题，3 分钟。<br>不靠星座、不靠眼缘——<b>从你的生活方式出发，帮你别养错。</b></p>
+  <p class="lede reveal d3">12 道小题，3 分钟。<br>不靠星座、不靠眼缘——<b>从你的生活方式出发，帮你别养错。</b></p>
   <div class="art reveal d4">
     <svg viewBox="0 0 240 220" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g stroke="#2B2622" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
@@ -3238,8 +3282,11 @@ function renderResult(){
   </header>
   <div class="stamp fade">
     <div class="lbl">YOUR TYPE · 养宠人格</div>
-    <div class="tag">${r.tag.tag}</div>
+    <div class="code">${r.tag.code.split('').join(' · ')}</div>
+    <div class="tag">${r.tag.name}</div>
+    <div class="en-sub">${r.tag.en}</div>
     <div class="ln">${r.tag.line}</div>
+    <div class="match-line">和你最配的狗 —— <b>${best.dog.name}</b></div>
   </div>
   ${r.relaxed?`<div class="relaxnote">符合所有硬条件的狗不多，已为你适当放宽</div>`:''}
   <div class="sec-label">最适合你的</div>
@@ -3295,10 +3342,10 @@ function renderDetail(){
 }
 
 /* events */
-window.startQuiz=()=>{picks={};step=0;render();};
+window.startQuiz=()=>{picks={};step=0;computed=false;render();};
 window.pick=(qid,i)=>{picks[qid]=i;step++;render();};
 window.goBack=()=>{step--;render();};
-window.restart=()=>{picks={};step=-1;viewDogId=null;render();};
+window.restart=()=>{picks={};step=-1;viewDogId=null;computed=false;render();};
 window.openDog=(id)=>{viewDogId=id;render();};
 window.closeDog=()=>{viewDogId=null;render();};
 render();
