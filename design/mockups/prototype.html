@@ -60,20 +60,41 @@ body{font-family:var(--f-body); color:var(--ink); background:var(--paper-deep);
 .art svg{width:100%; height:auto; display:block}
 
 /* ===== quiz ===== */
-.qhead{display:flex; align-items:center; gap:12px; margin:6px 0 26px}
+.qhead{display:flex; align-items:center; gap:12px; margin:6px 0 16px}
 .qbar{flex:1; height:5px; background:var(--line-soft); border-radius:99px; overflow:hidden}
-.qbar i{display:block; height:100%; background:var(--clay); border-radius:99px; transition:width .35s var(--ease)}
+.qbar i{display:block; height:100%; background:var(--clay); border-radius:99px; transition:width .4s var(--ease)}
 .qnum{font-family:var(--f-display); font-size:12.5px; color:var(--ink-faint); letter-spacing:.05em; white-space:nowrap}
+/* 主持人小狗 + 反应气泡 */
+.host{display:flex; align-items:flex-end; gap:11px; margin:4px 0 14px; min-height:52px}
+.host-dog{width:46px; height:46px; flex-shrink:0; background:var(--clay-tint); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; border:1.5px solid var(--line)}
+.host-dog svg{width:34px; height:34px}
+.host-dog.nod{animation:nod .5s var(--ease)}
+@keyframes nod{0%,100%{transform:none}40%{transform:translateY(-4px) rotate(-4deg)}}
+.bubble{position:relative; background:var(--ink); color:var(--paper); font-size:13.5px; line-height:1.5;
+  padding:9px 14px; border-radius:14px 14px 14px 3px; max-width:80%; opacity:0; transform:translateY(6px) scale(.96);
+  transition:opacity .2s var(--ease), transform .2s var(--ease)}
+.bubble.show{opacity:1; transform:none}
 .qtag{font-family:var(--f-display); font-style:italic; font-size:13px; color:var(--clay)}
 .qtext{font-family:var(--f-head); font-weight:700; font-size:24px; line-height:1.45; margin:8px 0 4px}
-.qsub{font-size:13px; color:var(--ink-faint); margin-bottom:24px}
+.qsub{font-size:13px; color:var(--ink-faint); margin-bottom:22px}
 .opts{display:flex; flex-direction:column; gap:11px}
-.opt{width:100%; text-align:left; min-height:56px; padding:15px 18px; background:var(--card);
-  border:1.5px solid var(--line); border-radius:14px; font-family:var(--f-body); font-size:15px;
-  line-height:1.5; color:var(--ink); cursor:pointer; transition:all .16s var(--ease); display:flex; align-items:center; gap:4px}
-.opt:hover{border-color:var(--clay); background:var(--clay-tint); transform:translateX(2px)}
-.opt:active{transform:translateX(0) scale(.99)}
-.qback{margin-top:22px; background:none; border:none; color:var(--ink-faint); font-size:14px; font-family:var(--f-body); cursor:pointer}
+.opt{width:100%; text-align:left; min-height:60px; padding:11px 14px; background:var(--card);
+  border:1.5px solid var(--line); border-radius:16px; font-family:var(--f-body); font-size:15px;
+  line-height:1.4; color:var(--ink); cursor:pointer; transition:all .16s var(--ease);
+  display:flex; align-items:center; gap:13px}
+.opt .emoji{width:42px; height:42px; flex-shrink:0; background:var(--paper-deep); border-radius:12px;
+  display:flex; align-items:center; justify-content:center; font-size:22px; transition:all .16s var(--ease)}
+.opt .lbl-t{flex:1}
+.opt:hover{border-color:var(--clay); transform:translateY(-2px); box-shadow:0 6px 16px rgba(43,38,34,.07)}
+.opt:hover .emoji{background:var(--clay-tint)}
+.opt:active{transform:translateY(0) scale(.99)}
+.opt.chosen{border-color:var(--clay); background:var(--clay); color:#FCF7EE}
+.opt.chosen .emoji{background:rgba(255,255,255,.18)}
+.opt.dim{opacity:.4}
+.quiz-enter{animation:qin .34s var(--ease)}
+@keyframes qin{from{opacity:0; transform:translateX(18px)}to{opacity:1; transform:none}}
+.qback{margin-top:20px; background:none; border:none; color:var(--ink-faint); font-size:14px; font-family:var(--f-body); cursor:pointer}
 
 /* ===== result ===== */
 .stamp{border:1.5px solid var(--clay); border-radius:18px; padding:20px 18px; text-align:center; position:relative; margin-bottom:22px; background:var(--clay-tint)}
@@ -178,19 +199,22 @@ const QUESTIONS = [
   "subtitle": "凭直觉选，没有标准答案",
   "options": [
    {
-    "label": "😴 窝在床上睡到自然醒，谁也别叫我",
+    "label": "😴 窝在床上睡到自然醒",
+    "reply": "记下了：你和闹钟是死对头。",
     "scores": {
      "exercise": 1
     }
    },
    {
-    "label": "☕️ 慢悠悠起床，楼下遛个弯买杯咖啡",
+    "label": "☕️ 慢悠悠遛个弯买杯咖啡",
+    "reply": "一个从容的早晨，懂了。",
     "scores": {
      "exercise": 3
     }
    },
    {
-    "label": "🌅 六点起来跑步 / 爬山，精神得很",
+    "label": "🌅 六点起来跑步 / 爬山",
+    "reply": "晨型人本人，体力不容小觑。",
     "scores": {
      "exercise": 5
     }
@@ -205,18 +229,21 @@ const QUESTIONS = [
   "options": [
    {
     "label": "🏢 城市里的小公寓 / 出租屋",
+    "reply": "空间有限，那就走精致小巧路线。",
     "filters": {
      "max_size": "small"
     }
    },
    {
     "label": "🏠 普通三居室，空间还行",
+    "reply": "空间宽裕，选择就多了。",
     "filters": {
      "max_size": "medium"
     }
    },
    {
-    "label": "🌳 大房子，甚至有院子 / 一楼带花园",
+    "label": "🌳 大房子 / 一楼带花园",
+    "reply": "有院子？那是狗的天堂。",
     "filters": {
      "max_size": "large"
     }
@@ -226,23 +253,26 @@ const QUESTIONS = [
  {
   "id": "q_neighbor",
   "type": "hard",
-  "text": "如果半夜有点动静，你的居住环境——",
+  "text": "半夜要是有点动静，你的居住环境——",
   "subtitle": "悄悄在问：怕不怕狗叫扰邻",
   "options": [
    {
-    "label": "🤫 合租 / 墙薄 / 邻居敏感，必须安静",
+    "label": "🤫 合租 / 墙薄，必须安静",
+    "reply": "安静第一，大嗓门的先排除。",
     "filters": {
      "max_noise": 2
     }
    },
    {
     "label": "🙂 还好，偶尔叫两声没人管",
+    "reply": "有点弹性，好办。",
     "filters": {
      "max_noise": 3
     }
    },
    {
-    "label": "🎉 独栋 / 隔音好，叫破天也无所谓",
+    "label": "🎉 隔音好，叫破天也无所谓",
+    "reply": "无所谓噪音，那是自由。",
     "filters": {
      "max_noise": 5
     }
@@ -252,27 +282,31 @@ const QUESTIONS = [
  {
   "id": "q_household",
   "type": "hard",
-  "text": "家里除了你，还有谁会跟狗朝夕相处？",
+  "text": "家里除了你，还有谁跟狗朝夕相处？",
   "subtitle": "可能藏着过敏和安全的坑",
   "options": [
    {
     "label": "🧍 就我一个，自由",
+    "reply": "一人一狗，干净利落。",
     "filters": {}
    },
    {
     "label": "👶 有小孩 / 老人",
+    "reply": "家里有老小，安全摆第一。",
     "filters": {
      "require_good_with_kids": true
     }
    },
    {
     "label": "🤧 有人对毛过敏 / 有洁癖",
+    "reply": "过敏是硬杠，只挑低敏的。",
     "filters": {
      "require_hypoallergenic": true
     }
    },
    {
-    "label": "🐈 已经有别的猫猫狗狗了",
+    "label": "🐈 已经有别的猫猫狗狗",
+    "reply": "已经有毛孩子了，得选个合群的。",
     "filters": {}
    }
   ]
@@ -284,19 +318,22 @@ const QUESTIONS = [
   "subtitle": "测它能不能忍受独处",
   "options": [
    {
-    "label": "🌙 我经常加班 / 出差，它得自己待大半天",
+    "label": "🌙 我常加班 / 出差，它得自己待大半天",
+    "reply": "你常不在，得选个能照顾好自己的。",
     "scores": {
      "alone_req": 5
     }
    },
    {
-    "label": "🏃 朝九晚六，白天没人但晚上都在",
+    "label": "🏃 朝九晚六，白天没人晚上都在",
+    "reply": "白天空巢，晚上团聚，刚好。",
     "scores": {
      "alone_req": 3
     }
    },
    {
-    "label": "🏡 我居家办公 / 时间自由，基本全天有人",
+    "label": "🏡 居家办公，基本全天有人",
+    "reply": "全天有人？黏人的小尾巴有福了。",
     "scores": {
      "alone_req": 1
     }
@@ -306,23 +343,26 @@ const QUESTIONS = [
  {
   "id": "q_mess",
   "type": "soft",
-  "text": "沙发上落了一层狗毛、地上一个泥脚印，你的反应是——",
+  "text": "沙发落了层狗毛、地上一个泥脚印，你——",
   "subtitle": "测对掉毛和打理的忍受度",
   "options": [
    {
-    "label": "😩 受不了，我希望家里一直干干净净",
+    "label": "😩 受不了，家里得一直干干净净",
+    "reply": "洁癖选手，省心款优先安排。",
     "scores": {
      "grooming": 1
     }
    },
    {
     "label": "😅 打扫一下就好，能接受适度乱",
+    "reply": "适度乱能接受，正常人一个。",
     "scores": {
      "grooming": 3
     }
    },
    {
     "label": "😎 无所谓，狗毛是爱的形状",
+    "reply": "心宽，掉毛怪也拦不住你。",
     "scores": {
      "grooming": 5
     }
@@ -332,23 +372,26 @@ const QUESTIONS = [
  {
   "id": "q_experience",
   "type": "soft",
-  "text": "面对一只调皮、不太听话、还有点犟的狗，你——",
+  "text": "面对一只调皮、不听话、还有点犟的狗，你——",
   "subtitle": "测经验和耐心，决定能不能驾驭",
   "options": [
    {
-    "label": "🆘 完全没养过，希望它天生乖、好带",
+    "label": "🆘 完全没养过，希望它天生乖",
+    "reply": "新手保护模式，已开启。",
     "scores": {
      "train": 1
     }
    },
    {
-    "label": "🙂 没太多经验，但愿意学、愿意花时间",
+    "label": "🙂 没太多经验，但愿意学",
+    "reply": "愿意花心思，这点很加分。",
     "scores": {
      "train": 3
     }
    },
    {
-    "label": "💪 我养过狗 / 很有耐心，再犟也能搞定",
+    "label": "💪 我养过狗，再犟也搞得定",
+    "reply": "老手出马，难搞的也不怕。",
     "scores": {
      "train": 5
     }
@@ -358,23 +401,26 @@ const QUESTIONS = [
  {
   "id": "q_budget",
   "type": "soft",
-  "text": "每个月愿意为狗花的钱，大概是——",
+  "text": "每个月愿意为狗花的钱，大概——",
   "subtitle": "狗粮、医疗、美容都在里面",
   "options": [
    {
-    "label": "💰 精打细算，越省心省钱越好",
+    "label": "💰 精打细算，越省越好",
+    "reply": "理性持家，记下了。",
     "scores": {
      "budget": 1
     }
    },
    {
-    "label": "💳 中等，合理范围内不心疼",
+    "label": "💳 中等，合理范围不心疼",
+    "reply": "合理范围，不会亏待它。",
     "scores": {
      "budget": 3
     }
    },
    {
     "label": "🤑 不差钱，只要它过得好",
+    "reply": "舍得花，狗跟着你享福。",
     "scores": {
      "budget": 5
     }
@@ -384,11 +430,12 @@ const QUESTIONS = [
  {
   "id": "q_size",
   "type": "pref",
-  "text": "接下来聊聊长相——你更想要多大的狗？",
+  "text": "好——接下来聊长相。你想要多大的狗？",
   "subtitle": "以下只影响排序，不影响合不合适",
   "options": [
    {
     "label": "🧸 小小一只，能抱在怀里",
+    "reply": "掌上明珠型，懂了。",
     "pref": {
      "type": "size",
      "value": "small"
@@ -396,6 +443,7 @@ const QUESTIONS = [
    },
    {
     "label": "🐕 中等个头，刚刚好",
+    "reply": "不大不小，刚刚好。",
     "pref": {
      "type": "size",
      "value": "medium"
@@ -403,6 +451,7 @@ const QUESTIONS = [
    },
    {
     "label": "🐺 有存在感的大块头",
+    "reply": "就爱有分量的，记下。",
     "pref": {
      "type": "size",
      "value": "large"
@@ -410,6 +459,7 @@ const QUESTIONS = [
    },
    {
     "label": "🤷 都行，不在意体型",
+    "reply": "体型随缘，更看眼缘。",
     "pref": null
    }
   ]
@@ -422,6 +472,7 @@ const QUESTIONS = [
   "options": [
    {
     "label": "🌾 长毛飘逸，有造型感",
+    "reply": "为颜值买单，可以的。",
     "pref": {
      "type": "coat_length",
      "value": "long"
@@ -429,6 +480,7 @@ const QUESTIONS = [
    },
    {
     "label": "✨ 短毛利落，好打理",
+    "reply": "好打理，明智之选。",
     "pref": {
      "type": "coat_length",
      "value": "short"
@@ -436,6 +488,7 @@ const QUESTIONS = [
    },
    {
     "label": "🤷 没偏好",
+    "reply": "毛长随意。",
     "pref": null
    }
   ]
@@ -447,7 +500,8 @@ const QUESTIONS = [
   "subtitle": "凭眼缘选",
   "options": [
    {
-    "label": "🤍 浅色系（白 / 奶油 / 金黄）",
+    "label": "🤍 浅色系（白 / 奶油 / 金）",
+    "reply": "浅色系，干净清爽。",
     "pref": {
      "type": "coat_color",
      "value": "浅色"
@@ -455,13 +509,15 @@ const QUESTIONS = [
    },
    {
     "label": "🖤 深色系（黑 / 棕 / 灰）",
+    "reply": "深色系，耐脏又有型。",
     "pref": {
      "type": "coat_color",
      "value": "深色"
     }
    },
    {
-    "label": "🐾 花色斑纹（双色 / 斑点 / 虎斑）",
+    "label": "🐾 花色斑纹（双色 / 斑点）",
+    "reply": "花色斑纹，有个性。",
     "pref": {
      "type": "coat_color",
      "value": "花色"
@@ -469,6 +525,7 @@ const QUESTIONS = [
    },
    {
     "label": "🤷 没偏好",
+    "reply": "颜色随缘。",
     "pref": null
    }
   ]
@@ -481,6 +538,7 @@ const QUESTIONS = [
   "options": [
    {
     "label": "🥰 奶萌可爱",
+    "reply": "颜控·奶萌派，收到。",
     "pref": {
      "type": "look_style",
      "value": "奶萌"
@@ -488,6 +546,7 @@ const QUESTIONS = [
    },
    {
     "label": "😎 帅气威风",
+    "reply": "颜控·帅气派，收到。",
     "pref": {
      "type": "look_style",
      "value": "帅气"
@@ -495,6 +554,7 @@ const QUESTIONS = [
    },
    {
     "label": "🧸 憨厚老实",
+    "reply": "就好这口老实劲儿。",
     "pref": {
      "type": "look_style",
      "value": "憨厚"
@@ -502,6 +562,7 @@ const QUESTIONS = [
    },
    {
     "label": "👑 优雅高贵",
+    "reply": "偏爱有气质的，懂了。",
     "pref": {
      "type": "look_style",
      "value": "优雅"
@@ -509,6 +570,7 @@ const QUESTIONS = [
    },
    {
     "label": "🤷 没偏好",
+    "reply": "长相随缘，看缘分。",
     "pref": null
    }
   ]
@@ -3236,19 +3298,34 @@ function renderLanding(){
   </div>`;
 }
 
+const DOG_HEAD=`<svg viewBox="0 0 48 48" fill="none">
+  <g stroke="#2B2622" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+   <path d="M15 14 C11 7 13 5 18 9 C20 11 21 13 22 15" fill="#F0DECF"/>
+   <path d="M33 14 C37 7 35 5 30 9 C28 11 27 13 26 15" fill="#F0DECF"/>
+   <path d="M14 22 C14 14 19 11 24 11 C29 11 34 14 34 22 C34 30 29 34 24 34 C19 34 14 30 14 22Z" fill="#FCFAF4"/>
+  </g>
+  <circle cx="19.5" cy="22" r="1.9" fill="#2B2622"/><circle cx="28.5" cy="22" r="1.9" fill="#2B2622"/>
+  <path d="M21.5 27 C21.5 25 26.5 25 26.5 27 C26.5 29 24 30 24 30 C24 30 21.5 29 21.5 27Z" fill="#B14A26"/>
+</svg>`;
+let answering=false;
 function renderQuestion(){
   const q=QUESTIONS[step]; const prog=Math.round(step/QUESTIONS.length*100);
   app.innerHTML=`
-  <div class="fade">
+  <div class="quiz-enter">
     <div class="qhead">
       <div class="qbar"><i style="width:${prog}%"></i></div>
       <div class="qnum">${String(step+1).padStart(2,'0')} / ${String(QUESTIONS.length).padStart(2,'0')}</div>
     </div>
+    <div class="host">
+      <div class="host-dog" id="hostDog">${DOG_HEAD}</div>
+      <div class="bubble" id="bubble"></div>
+    </div>
     <div class="qtag">${q.type==='hard'?'硬条件':q.type==='pref'?'凭感觉':'生活方式'}</div>
     <div class="qtext">${q.text}</div>
     <div class="qsub">${q.subtitle||''}</div>
-    <div class="opts">
-      ${q.options.map((o,i)=>`<button class="opt" onclick="pick('${q.id}',${i})">${o.label}</button>`).join('')}
+    <div class="opts" id="opts">
+      ${q.options.map((o,i)=>{const sp=o.label.indexOf(' ');const em=sp>0?o.label.slice(0,sp):'🐾';const tx=sp>0?o.label.slice(sp+1):o.label;
+        return `<button class="opt" data-i="${i}" onclick="pick('${q.id}',${i})"><span class="emoji">${em}</span><span class="lbl-t">${tx}</span></button>`;}).join('')}
     </div>
     ${step>0?`<button class="qback" onclick="goBack()">← 上一题</button>`:''}
   </div>`;
@@ -3343,8 +3420,20 @@ function renderDetail(){
 
 /* events */
 window.startQuiz=()=>{picks={};step=0;computed=false;render();};
-window.pick=(qid,i)=>{picks[qid]=i;step++;render();};
-window.goBack=()=>{step--;render();};
+window.pick=(qid,i)=>{
+  if(answering)return; answering=true;
+  picks[qid]=i;
+  document.querySelectorAll('#opts .opt').forEach(b=>{
+    b.style.pointerEvents='none';
+    if(+b.dataset.i===i)b.classList.add('chosen'); else b.classList.add('dim');
+  });
+  const reply=(QUESTIONS[step].options[i].reply)||'好的，记下了。';
+  const bub=document.getElementById('bubble'), hd=document.getElementById('hostDog');
+  if(bub){bub.textContent=reply; requestAnimationFrame(()=>bub.classList.add('show'));}
+  if(hd)hd.classList.add('nod');
+  setTimeout(()=>{answering=false; step++; render();}, 950);
+};
+window.goBack=()=>{if(answering)return; step--; render();};
 window.restart=()=>{picks={};step=-1;viewDogId=null;computed=false;render();};
 window.openDog=(id)=>{viewDogId=id;render();};
 window.closeDog=()=>{viewDogId=null;render();};
