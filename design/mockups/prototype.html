@@ -170,6 +170,20 @@ body{font-family:var(--f-body); color:var(--ink); background:var(--paper-deep);
 .detail-back{display:inline-flex; align-items:center; gap:6px; background:none; border:none; color:var(--ink-soft); font-size:14px; font-family:var(--f-body); cursor:pointer; margin-bottom:6px}
 .detail-back svg{width:16px;height:16px}
 
+/* 浏览图鉴入口 + 图鉴页 */
+.browse-link{display:block; width:100%; margin-top:12px; background:none; border:none; cursor:pointer;
+  font-family:var(--f-body); font-size:13.5px; color:var(--clay); text-align:center; padding:6px}
+.browse-link:hover{text-decoration:underline}
+.browse-head{margin:8px 0 18px}
+.browse-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.bcard{background:var(--card); border:1.5px solid var(--line); border-radius:14px; overflow:hidden;
+  cursor:pointer; padding:0; text-align:left; transition:transform .16s var(--ease),box-shadow .16s var(--ease)}
+.bcard:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(43,38,34,.09)}
+.bphoto{position:relative; aspect-ratio:1/1; background:var(--paper-deep); display:flex; align-items:center; justify-content:center; overflow:hidden}
+.bphoto img{width:100%; height:100%; object-fit:cover; display:block}
+.bmix{position:absolute; top:7px; left:7px; background:var(--ochre-tint); color:var(--ochre); font-size:10px; padding:2px 7px; border-radius:99px}
+.bname{display:flex; align-items:baseline; justify-content:space-between; gap:4px; padding:9px 11px; font-family:var(--f-head); font-weight:700; font-size:15px}
+.bname .bsize{font-family:var(--f-body); font-weight:400; font-size:11px; color:var(--ink-faint)}
 /* footer actions */
 .actions{margin-top:auto; padding-top:24px}
 .trust{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:14px; font-size:11.5px; color:var(--ink-faint); letter-spacing:.03em}
@@ -3167,24 +3181,29 @@ function hardFilter(dogs,a){return dogs.filter(d=>{
   if(SIZE_RANK[d.size]>SIZE_RANK[a.max_size])return false;
   if(a.require.kids&&!d.filters.good_with_kids)return false;
   if(a.require.hypo&&!d.filters.hypoallergenic)return false; return true;});}
+// 各维度"富余"(狗要求<你能给)的惩罚倍数。运动最看重"合拍"，其余适度，避免万金油低需求狗霸榜
+const SURPLUS={exercise:0.7, noise:0.4, alone:0.5, grooming:0.4, train:0.4, budget:0.4};
+const PREF_W=1.6;   // 外观偏好加权：让你的口味更有话语权
 function scoreDog(d,a){
   const dims=[{key:"exercise",demand:d.traits.exercise,supply:a.exercise},{key:"noise",demand:d.filters.noise,supply:a.max_noise},
     {key:"alone",demand:a.alone_req,supply:d.traits.alone_tolerance},{key:"grooming",demand:d.traits.grooming,supply:a.grooming},
     {key:"train",demand:d.traits.train_difficulty,supply:a.train},{key:"budget",demand:d.traits.budget,supply:a.budget}];
   let penalty=0; const detail=[];
   dims.forEach(dm=>{const gap=dm.demand-dm.supply; const w=WEIGHTS[dm.key];
-    penalty+= gap>0?gap*w:Math.abs(gap)*w*0.2; detail.push({key:dm.key,gap});});
+    penalty+= gap>0?gap*w:Math.abs(gap)*w*(SURPLUS[dm.key]||0.4); detail.push({key:dm.key,gap});});
   const practical=100*(1-penalty/MAX_PENALTY);
-  // 外观偏好：只加分、用来排序（不影响合不合适）。bonus 不封顶，保证满分群里也能按喜好排序
+  // 外观偏好：只加分、用来排序（不影响合不合适）。bonus 不封顶，满分群里也能按喜好排序
   let bonus=0;
   (a.prefs||[]).forEach(p=>{
     if(!p)return; const ap=d.appearance||{};
-    if(p.type==="size"      && d.size===p.value) bonus+=5;
-    else if(p.type==="coat_length" && ap.coat_length===p.value) bonus+=3;
-    else if(p.type==="coat_color"  && (ap.coat_colors||[]).includes(p.value)) bonus+=3;
-    else if(p.type==="look_style"  && (ap.look_style||[]).includes(p.value)) bonus+=4;
+    if(p.type==="size"      && d.size===p.value) bonus+=5*PREF_W;
+    else if(p.type==="coat_length" && ap.coat_length===p.value) bonus+=3*PREF_W;
+    else if(p.type==="coat_color"  && (ap.coat_colors||[]).includes(p.value)) bonus+=3*PREF_W;
+    else if(p.type==="look_style"  && (ap.look_style||[]).includes(p.value)) bonus+=4*PREF_W;
   });
-  return{score:Math.max(0,Math.min(100,Math.round(practical+bonus))), rank:practical+bonus, detail};}
+  // 微随机：同样答案每次也能浮现不同的好狗，重玩有新鲜感（只扰动排序，不改显示分）
+  const jitter=(Math.random()*2-1)*4;
+  return{score:Math.max(0,Math.min(100,Math.round(practical+bonus))), rank:practical+bonus+jitter, detail};}
 function explain(d,detail){
   const good=detail.filter(x=>x.gap<=0).sort((a,b)=>a.gap-b.gap).slice(0,2).map(g=>`你给得起「${DIM_LABEL[g.key]}」`);
   const worst=detail.slice().sort((a,b)=>b.gap-a.gap)[0];
@@ -3212,7 +3231,7 @@ function match(picks){
   const a=collectAnswers(picks); let pool=hardFilter(DOGS,a); let relaxed=false;
   if(pool.length===0){relaxed=true; pool=hardFilter(DOGS,{...a,max_size:"large"}); if(pool.length===0)pool=DOGS.slice();}
   const ranked=pool.map(d=>{const s=scoreDog(d,a); return{dog:d,score:s.score,rank:s.rank,why:explain(d,s.detail)};}).sort((x,y)=>y.rank-x.rank);
-  return{top:ranked.slice(0,3),tag:personalityTag(a),relaxed};}
+  return{top:ranked.slice(0,5),tag:personalityTag(a),relaxed};}
 
 /* ============ 详情数据展示 ============ */
 const TRAITS_ORDER=[
@@ -3229,6 +3248,7 @@ const app=document.getElementById("app");
 let picks={}, step=-1; // -1 landing, 0..n-1 quiz, n result
 let viewDogId=null;     // null=正常流程；有值=看详情
 let computed=false;     // 答完后先放"翻档案"动画，再出结果
+let browsing=false;     // true=在浏览全部犬种图鉴
 
 const ICON={
   arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
@@ -3241,6 +3261,7 @@ const ICON={
 
 function render(){
   if(viewDogId)return renderDetail();
+  if(browsing)return renderBrowse();
   if(step===-1)return renderLanding();
   if(step>=0&&step<QUESTIONS.length)return renderQuestion();
   if(!computed)return renderLoading();
@@ -3294,6 +3315,7 @@ function renderLanding(){
   </div>
   <div class="actions reveal d5">
     <button class="btn" onclick="startQuiz()">开始测试 ${ICON.arrow}</button>
+    <button class="browse-link" onclick="openBrowse()">或，先翻翻 ${DOGS.length} 个品种的图鉴 →</button>
     <div class="trust">${ICON.seal} 基于 AKC 犬种特性数据 <span class="dotsep"></span> 不收集个人信息</div>
   </div>`;
 }
@@ -3371,9 +3393,27 @@ function renderResult(){
   <div class="sec-label">你可能也会喜欢</div>
   ${r.top.slice(1).map(m=>dogCard(m,false)).join('')}
   <div class="actions">
-    <button class="btn btn-ghost" onclick="restart()">重新测一次</button>
+    <button class="btn" onclick="openBrowse()">浏览全部 ${DOGS.length} 个品种</button>
+    <button class="btn btn-ghost" onclick="restart()" style="margin-top:10px">重新测一次</button>
     <div class="trust">${ICON.seal} 点任意一只狗，看它的完整档案</div>
   </div>`;
+}
+
+function renderBrowse(){
+  app.innerHTML=`
+  <button class="detail-back" onclick="closeBrowse()">${ICON.back} 返回</button>
+  <div class="browse-head">
+    <div class="kicker" style="font-family:var(--f-display);font-style:italic;font-size:13.5px;color:var(--clay)">A Field Guide · 犬种图鉴</div>
+    <h2 style="font-family:var(--f-head);font-weight:900;font-size:27px;margin-top:5px">全部 ${DOGS.length} 个品种</h2>
+    <p style="font-size:13px;color:var(--ink-faint);margin-top:5px">点任意一只，看它的完整档案</p>
+  </div>
+  <div class="browse-grid">
+    ${DOGS.map(d=>`<button class="bcard fade" onclick="openDog('${d.id}')">
+      <div class="bphoto"><img src="${photoOf(d.id)}" loading="lazy" alt="${d.name}">${d.crossbreed?'<span class="bmix">混血</span>':''}</div>
+      <div class="bname">${d.name}<span class="bsize">${SIZE_CN[d.size]}</span></div>
+    </button>`).join('')}
+  </div>`;
+  window.scrollTo(0,0);
 }
 
 function renderDetail(){
@@ -3437,6 +3477,8 @@ window.goBack=()=>{if(answering)return; step--; render();};
 window.restart=()=>{picks={};step=-1;viewDogId=null;computed=false;render();};
 window.openDog=(id)=>{viewDogId=id;render();};
 window.closeDog=()=>{viewDogId=null;render();};
+window.openBrowse=()=>{browsing=true;render();};
+window.closeBrowse=()=>{browsing=false;render();};
 render();
 </script>
 </body>
