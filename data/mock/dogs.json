@@ -1,13 +1,14 @@
 {
-  "_comment": "63 个品种数据 v1。打分依据 docs/decisions/breed-scoring-rubric.md 的统一标尺，主要来源 AKC breed traits（1-5分制），train_difficulty 已对 AKC Trainability 取反（1=好训新手友好，5=固执难驾驭）。budget 为按体型+易病+美容的工程估值，置信度中，待 Louug + 养狗常识校准。traits/filters 字段含义见 rubric。",
+  "_comment": "70 个品种数据 v1。打分依据 docs/decisions/breed-scoring-rubric.md 的统一标尺，主要来源 AKC breed traits（1-5分制），train_difficulty 已对 AKC Trainability 取反（1=好训新手友好，5=固执难驾驭）。budget 为按体型+易病+美容的工程估值，置信度中，待 Louug + 养狗常识校准。traits/filters 字段含义见 rubric。",
   "_meta": {
     "version": "v2",
     "source": "AKC breed traits + Dogtime + 中文养犬资料",
     "status": "待校准（尤其 budget 和 alone_tolerance）",
     "rubric": "docs/decisions/breed-scoring-rubric.md",
     "photos": "每个品种一张照片，按 id 命名存于 data/mock/dogs/<id>.jpg。来源：维基百科/维基共享犬种词条首图（部分 dog.ceo）。⚠️ 上线前需逐张核实版权/授权（CC 协议署名要求），商用前替换为有明确授权的图。",
-    "count": 63,
-    "appearance": "每只含 appearance：coat_length(short/medium/long)、coat_colors(浅色/深色/花色)、look_style(奶萌/帅气/憨厚/优雅)，用于外观偏好排序"
+    "count": 70,
+    "appearance": "每只含 appearance：coat_length(short/medium/long)、coat_colors(浅色/深色/花色)、look_style(奶萌/帅气/憨厚/优雅)，用于外观偏好排序",
+    "crossbreed_note": "含 7 个混血/设计师犬(crossbreed=true)，无AKC数据、按父母均值估算，个体差异大，分值置信度中"
   },
   "dogs": [
     {
@@ -2377,6 +2378,276 @@
       "one_liner": "顶着大胡子的黑衣保镖，聪明得让你怀疑它听得懂人话。",
       "real_talk": "少掉毛但要定期修剪，能量和护卫欲都猛，新手很难驾驭。",
       "source_note": "AKC/Orvis；置信度高"
+    },
+    {
+      "id": "cockapoo",
+      "name": "可卡布",
+      "name_en": "Cockapoo",
+      "size": "small",
+      "crossbreed": true,
+      "traits": {
+        "exercise": 3,
+        "grooming": 4,
+        "alone_tolerance": 2,
+        "train_difficulty": 2,
+        "budget": 3
+      },
+      "filters": {
+        "noise": 3,
+        "hypoallergenic": true,
+        "good_with_kids": true,
+        "novice_friendly": true
+      },
+      "appearance": {
+        "coat_length": "medium",
+        "coat_colors": [
+          "浅色",
+          "深色",
+          "花色"
+        ],
+        "look_style": [
+          "奶萌"
+        ]
+      },
+      "personality": [
+        "亲人",
+        "活泼",
+        "聪明"
+      ],
+      "one_liner": "可卡的温柔加贵宾的脑子，黏人又好教，长着一张永远在笑的卷毛娃娃脸。",
+      "real_talk": "混血个体差异大，毛色性格各不同；卷毛低掉毛但要定期修剪，遗传可卡的大耳朵也得防耳道发炎。",
+      "source_note": "混血(可卡×贵宾)，按父母均值+共性估算，无AKC数据，置信度中"
+    },
+    {
+      "id": "goldendoodle",
+      "name": "金贵/金毛贵宾",
+      "name_en": "Goldendoodle",
+      "size": "large",
+      "crossbreed": true,
+      "traits": {
+        "exercise": 4,
+        "grooming": 4,
+        "alone_tolerance": 2,
+        "train_difficulty": 2,
+        "budget": 4
+      },
+      "filters": {
+        "noise": 2,
+        "hypoallergenic": true,
+        "good_with_kids": true,
+        "novice_friendly": true
+      },
+      "appearance": {
+        "coat_length": "long",
+        "coat_colors": [
+          "浅色",
+          "深色"
+        ],
+        "look_style": [
+          "奶萌",
+          "憨厚"
+        ]
+      },
+      "personality": [
+        "温顺",
+        "聪明",
+        "亲人"
+      ],
+      "one_liner": "金毛的好脾气配贵宾的少掉毛，是很多家庭梦中的'不掉毛大暖男'。",
+      "real_talk": "混血毛量掉毛因个体而异、不保证完全不掉；体型大、卷毛美容贵，运动量也不低。",
+      "source_note": "混血(金毛×贵宾)，按父母均值+共性估算，无AKC数据，置信度中"
+    },
+    {
+      "id": "labradoodle",
+      "name": "拉布拉多贵宾",
+      "name_en": "Labradoodle",
+      "size": "large",
+      "crossbreed": true,
+      "traits": {
+        "exercise": 5,
+        "grooming": 4,
+        "alone_tolerance": 2,
+        "train_difficulty": 2,
+        "budget": 4
+      },
+      "filters": {
+        "noise": 3,
+        "hypoallergenic": true,
+        "good_with_kids": true,
+        "novice_friendly": true
+      },
+      "appearance": {
+        "coat_length": "medium",
+        "coat_colors": [
+          "浅色",
+          "深色",
+          "花色"
+        ],
+        "look_style": [
+          "奶萌",
+          "憨厚"
+        ]
+      },
+      "personality": [
+        "热情",
+        "聪明",
+        "活泼"
+      ],
+      "one_liner": "导盲犬血统的混血元祖，活力满满又聪明好教，最早就是为'低敏导盲犬'培育的。",
+      "real_talk": "混血掉毛和毛质不稳定、不保证低敏；精力旺需要大量运动，幼年期能折腾，卷毛要常修剪。",
+      "source_note": "混血(拉布拉多×贵宾)，按父母均值+共性估算，无AKC数据，置信度中"
+    },
+    {
+      "id": "maltipoo",
+      "name": "马尔贵",
+      "name_en": "Maltipoo",
+      "size": "small",
+      "crossbreed": true,
+      "traits": {
+        "exercise": 2,
+        "grooming": 4,
+        "alone_tolerance": 2,
+        "train_difficulty": 2,
+        "budget": 3
+      },
+      "filters": {
+        "noise": 4,
+        "hypoallergenic": true,
+        "good_with_kids": true,
+        "novice_friendly": true
+      },
+      "appearance": {
+        "coat_length": "long",
+        "coat_colors": [
+          "浅色"
+        ],
+        "look_style": [
+          "奶萌",
+          "优雅"
+        ]
+      },
+      "personality": [
+        "黏人",
+        "温柔",
+        "活泼"
+      ],
+      "one_liner": "巴掌大的软萌卷毛娃，温柔黏人又少掉毛，是公寓里的小棉袄首选。",
+      "real_talk": "混血个体差异大；极黏人、独处久了易焦虑爱叫，柔软长毛不打理就打结。",
+      "source_note": "混血(马尔济斯×贵宾)，按父母均值+共性估算，无AKC数据，置信度中"
+    },
+    {
+      "id": "cavapoo",
+      "name": "卡瓦布",
+      "name_en": "Cavapoo",
+      "size": "small",
+      "crossbreed": true,
+      "traits": {
+        "exercise": 3,
+        "grooming": 4,
+        "alone_tolerance": 2,
+        "train_difficulty": 2,
+        "budget": 4
+      },
+      "filters": {
+        "noise": 2,
+        "hypoallergenic": true,
+        "good_with_kids": true,
+        "novice_friendly": true
+      },
+      "appearance": {
+        "coat_length": "medium",
+        "coat_colors": [
+          "浅色",
+          "花色"
+        ],
+        "look_style": [
+          "奶萌"
+        ]
+      },
+      "personality": [
+        "温柔",
+        "黏人",
+        "亲人"
+      ],
+      "one_liner": "查理王的甜美脾气配贵宾的卷毛，对谁都温柔，是出了名的好相处。",
+      "real_talk": "混血个体差异大；非常黏人不耐独处，且可能遗传查理王的心脏问题，后期开销要留意。",
+      "source_note": "混血(查理王×贵宾)，按父母均值+共性估算，无AKC数据，置信度中"
+    },
+    {
+      "id": "poochon",
+      "name": "比熊贵宾",
+      "name_en": "Poochon",
+      "size": "small",
+      "crossbreed": true,
+      "traits": {
+        "exercise": 3,
+        "grooming": 4,
+        "alone_tolerance": 2,
+        "train_difficulty": 2,
+        "budget": 3
+      },
+      "filters": {
+        "noise": 3,
+        "hypoallergenic": true,
+        "good_with_kids": true,
+        "novice_friendly": true
+      },
+      "appearance": {
+        "coat_length": "medium",
+        "coat_colors": [
+          "浅色"
+        ],
+        "look_style": [
+          "奶萌"
+        ]
+      },
+      "personality": [
+        "开朗",
+        "亲人",
+        "爱玩"
+      ],
+      "one_liner": "两个'棉花糖品种'的合体，一团蓬松小卷毛，乐天派又特别会撒娇。",
+      "real_talk": "混血个体差异大；白卷毛要常打理防泪痕和打结，黏人、独处久了会闹。",
+      "source_note": "混血(比熊×贵宾)，按父母均值+共性估算，无AKC数据，置信度中（照片为同类小型卷毛混血的示意图，非该串专属）"
+    },
+    {
+      "id": "schnoodle",
+      "name": "雪纳瑞贵宾",
+      "name_en": "Schnoodle",
+      "size": "small",
+      "crossbreed": true,
+      "traits": {
+        "exercise": 3,
+        "grooming": 4,
+        "alone_tolerance": 3,
+        "train_difficulty": 2,
+        "budget": 3
+      },
+      "filters": {
+        "noise": 4,
+        "hypoallergenic": true,
+        "good_with_kids": true,
+        "novice_friendly": true
+      },
+      "appearance": {
+        "coat_length": "medium",
+        "coat_colors": [
+          "深色",
+          "浅色"
+        ],
+        "look_style": [
+          "帅气",
+          "奶萌"
+        ]
+      },
+      "personality": [
+        "机灵",
+        "活泼",
+        "亲人"
+      ],
+      "one_liner": "雪纳瑞的机灵配贵宾的聪明，精力足、少掉毛，是个鬼点子很多的小开心果。",
+      "real_talk": "混血个体差异大；继承雪纳瑞的警觉爱叫，卷/硬毛要定期修剪。",
+      "source_note": "混血(雪纳瑞×贵宾)，按父母均值+共性估算，无AKC数据，置信度中（照片为同类小型卷毛混血的示意图，非该串专属）"
     }
   ]
 }
